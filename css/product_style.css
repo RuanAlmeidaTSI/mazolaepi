@@ -1,0 +1,289 @@
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f8ff; /* Azul claro */
+            color: #002147; /* Azul escuro */
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+			box-sizing: border-box;
+        }
+
+*,
+*:before,
+*:after {
+    box-sizing: inherit; /* Apply box-sizing to all elements */
+}
+
+        header {
+            background-color: #002147; /* Azul escuro */
+            padding: 20px;
+            text-align: center;
+        }
+
+		.expandable-link {
+    display: inline-block; /* Necessary for width/height to take effect */
+    padding: 10px 20px; /* Initial padding */
+    color: white; /* Text color */
+    text-decoration: none; /* Remove underline */
+    border-radius: 5px; /* Rounded corners */
+    transition: all 0.3s ease; /* Smooth transition for all properties */
+}
+
+.expandable-link:hover {
+    padding: 15px 25px; /* Increased padding on hover */
+	font-size: 28px;
+    
+}
+
+
+
+
+
+
+
+        header img {
+            width: 150px; /* Ajuste o tamanho da logo conforme necessário */
+        }
+
+        h1 {
+            color: #fff;
+            margin: 20px 0;
+        }
+
+        nav {
+            margin: 20px 0;
+        }
+
+        nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+        }
+
+        nav ul li {
+            margin: 0 15px;
+        }
+
+		nav ul li a {
+			text-decoration: none;
+			color: #fff;
+			font-size: 18px;
+		
+		}
+
+
+        /* Main Content Section */
+main {
+    display: flex; /* Enable flexbox layout */
+    flex-direction: column; /* Align children in a row */
+    flex-wrap: nowrap; /* Prevent wrapping */
+    padding: 40px 20px; /* Retain horizontal padding if desired */
+    text-align: left; /* Align text to the left */
+    width: 100%; /* Set to 100% to cover the full width */
+    margin: 0; /* Remove margins */
+    position: relative; /* Enable positioning for the overlay */
+    overflow: hidden; /* Prevent overflow from the overlay */
+}
+
+				.background-image {
+			background-image: url('../images/background.png'); /* Your background image */
+			background-size: cover; /* Cover the whole main section */
+			background-repeat: no-repeat; /* Prevent repeating */
+			background-position: center; /* Center the image */
+			position: absolute; /* Position absolutely within main */
+			top: 0;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			z-index: -1; /* Place it behind the content */
+			opacity: 0.09; /* Set the desired opacity */
+		}
+
+        .content {
+			padding-left: 3%;
+			flex: 1;
+            position: relative; /* Position for content above background */
+            z-index: 1; /* Ensure content is above the background */
+        }
+		
+        .content h2 {
+            font-size: 28px;
+            margin-bottom: 20px;
+        }
+		.content h3{
+            font-size: 28px;
+        }
+
+        .content p, .content ul {
+            font-size: 18px;
+			padding-left: 3%;
+            line-height: 1.6;
+        }
+
+        .content ul {
+		
+            padding-left: 20px;
+        }
+
+        .content ul li {
+            margin-bottom: 10px;
+        }
+
+        /* Footer Styles */
+        footer {
+            background-color: #002147; /* Azul escuro */
+            color: #fff;
+            padding: 20px;
+            display: flex;
+            justify-content: space-around;
+            text-align: left;
+            margin-top: auto;
+        }
+
+        footer .section {
+            flex: 1;
+            margin: 0 20px;
+        }
+
+        footer .section h3 {
+            font-size: 18px;
+            margin: 10px 0;
+            color: #fff;
+        }
+
+        footer .section h3 img {
+            vertical-align: middle;
+            width: 20px;
+            margin-right: 10px;
+        }
+
+        footer .section ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        footer .section ul li {
+            margin: 5px 0;
+            font-weight: bold;
+        }
+
+        footer .address-section {
+            text-align: center;
+            font-weight: bold;
+			justify-content: center;
+			Padding-top:50px;
+        }
+
+        footer .address-section p {
+            margin: 10px 0;
+			
+        }
+
+        footer .logo {
+            width: 100px;
+            margin: 10px auto;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            footer {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            footer .section {
+                margin-bottom: 20px;
+            }
+        }
+
+.main-container {
+    display: flex; /* Set the main container as a flexbox */
+    flex-direction: row; /* Arrange children in a row */
+    align-items: flex-start; /* Align items to the top */
+}
+
+.content {
+    flex: 1; /* Allow content to take the remaining space */
+    margin-right: 20px; /* Space between content and image */
+}
+
+.right-container {
+    width: 400px; /* Fixed width for the image container */
+    border: 15px solid #002147; /* Dark blue border */
+    border-radius: 10px; /* Rounded corners */
+    overflow: hidden; /* Hide any overflow */
+}
+
+.single-image {
+    width: 100%; /* Make image responsive */
+    height: auto; /* Maintain aspect ratio */
+}
+
+table {
+    width: 100%; /* Use full width of the container */
+    border-collapse: collapse; /* Merge borders into a single border */
+    margin-top: 20px; /* Space above the table */
+}
+
+th, td {
+    border: 1px solid #002147; /* Dark blue border for cells */
+    padding: 10px; /* Padding inside cells */
+    text-align: center; /* Align text to the left */
+}
+
+th {
+    background-color: #002147; /* Dark blue background for header */
+    color: #fff; /* White text for header */
+}
+
+td {
+	background-color: white; /* White background for table cells */
+    padding: 10px; /* Add some padding for aesthetics */
+    border: 1px solid #ddd; /* Optional: Add border for separation */
+}
+
+#titulo_produto{
+color: #000;
+font-size: 50px;
+}
+
+.call-to-action {
+    background-color: #f0f8ff; /* Light blue background */
+    border: 2px solid #002147; /* Dark blue border */
+    border-radius: 10px; /* Rounded corners */
+    padding: 20px; /* Padding for spacing */
+    text-align: center; /* Centered text */
+}
+
+.call-to-action h2 {
+    color: #002147; /* Dark blue text */
+    margin-bottom: 10px; /* Space below heading */
+}
+
+.call-to-action p {
+    color: #333; /* Dark gray text */
+    margin-bottom: 20px; /* Space below paragraph */
+}
+
+.cta-button {
+    display: inline-block; /* Make it an inline block for padding */
+    padding: 10px 20px; /* Padding for button */
+    background-color: #002147; /* Dark blue background */
+    color: white; /* White text */
+    text-decoration: none; /* No underline */
+    border-radius: 5px; /* Rounded corners */
+    transition: background-color 0.3s; /* Smooth background color change */
+}
+
+.cta-button:hover {
+    background-color: #004a85; /* Darker blue on hover */
+}
+
+.call-to-action-wrapper{
+	margin-top:15px;
+	margin-bottom:30px;
+}

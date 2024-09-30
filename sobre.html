@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mazola EPI</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f8ff; /* Azul claro */
+            color: #002147; /* Azul escuro */
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+			box-sizing: border-box;
+        }
+
+*,
+*:before,
+*:after {
+    box-sizing: inherit; /* Apply box-sizing to all elements */
+}
+
+        header {
+            background-color: #002147; /* Azul escuro */
+            padding: 20px;
+            text-align: center;
+        }
+
+		.expandable-link {
+    display: inline-block; /* Necessary for width/height to take effect */
+    padding: 10px 20px; /* Initial padding */
+    color: white; /* Text color */
+    text-decoration: none; /* Remove underline */
+    border-radius: 5px; /* Rounded corners */
+    transition: all 0.3s ease; /* Smooth transition for all properties */
+}
+
+.expandable-link:hover {
+    padding: 15px 25px; /* Increased padding on hover */
+	font-size: 28px;
+    
+}
+
+
+
+
+
+
+
+        header img {
+            width: 150px; /* Ajuste o tamanho da logo conforme necessário */
+        }
+
+        h1 {
+            color: #fff;
+            margin: 20px 0;
+        }
+
+        nav {
+            margin: 20px 0;
+        }
+
+        nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+        }
+
+        nav ul li {
+            margin: 0 15px;
+        }
+
+		nav ul li a {
+			text-decoration: none;
+			color: #fff;
+			font-size: 18px;
+		
+		}
+
+
+        /* Main Content Section */
+main {
+    display: flex; /* Enable flexbox layout */
+    flex-direction: column; /* Align children in a row */
+    flex-wrap: nowrap; /* Prevent wrapping */
+    padding: 40px 20px; /* Retain horizontal padding if desired */
+    text-align: left; /* Align text to the left */
+    width: 100%; /* Set to 100% to cover the full width */
+    margin: 0; /* Remove margins */
+    position: relative; /* Enable positioning for the overlay */
+    overflow: hidden; /* Prevent overflow from the overlay */
+}
+
+				.background-image {
+			background-image: url('images/background.png'); /* Your background image */
+			background-size: cover; /* Cover the whole main section */
+			background-repeat: no-repeat; /* Prevent repeating */
+			background-position: center; /* Center the image */
+			position: absolute; /* Position absolutely within main */
+			top: 0;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			z-index: -1; /* Place it behind the content */
+			opacity: 0.05; /* Set the desired opacity */
+		}
+
+        .content {
+			padding-left: 3%;
+			flex: 1;
+            position: relative; /* Position for content above background */
+            z-index: 1; /* Ensure content is above the background */
+        }
+		
+        .content h2 {
+            font-size: 28px;
+            margin-bottom: 20px;
+        }
+		.content h3{
+            font-size: 28px;
+        }
+
+        .content p, .content ul {
+            font-size: 18px;
+			padding-left: 3%;
+            line-height: 1.6;
+        }
+
+        .content ul {
+		
+            padding-left: 20px;
+        }
+
+        .content ul li {
+            margin-bottom: 10px;
+        }
+
+        /* Footer Styles */
+        footer {
+            background-color: #002147; /* Azul escuro */
+            color: #fff;
+            padding: 20px;
+            display: flex;
+            justify-content: space-around;
+            text-align: left;
+            margin-top: auto;
+        }
+
+        footer .section {
+            flex: 1;
+            margin: 0 20px;
+        }
+
+        footer .section h3 {
+            font-size: 18px;
+            margin: 10px 0;
+            color: #fff;
+        }
+
+        footer .section h3 img {
+            vertical-align: middle;
+            width: 20px;
+            margin-right: 10px;
+        }
+
+        footer .section ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        footer .section ul li {
+            margin: 5px 0;
+            font-weight: bold;
+        }
+
+        footer .address-section {
+            text-align: center;
+            font-weight: bold;
+			justify-content: center;
+			Padding-top:50px;
+        }
+
+        footer .address-section p {
+            margin: 10px 0;
+			
+        }
+
+        footer .logo {
+            width: 100px;
+            margin: 10px auto;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            footer {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            footer .section {
+                margin-bottom: 20px;
+            }
+        }
+
+.right-containers {
+display: flex; /* Enable flexbox */
+    flex-direction: column;
+	width: 50%; /* Adjust as necessary */
+    max-width: 400px; /* Keep it contained */
+    height: auto; /* Adjust height based on content */
+    padding: 10px; /* Padding */
+}
+		
+.right-container {
+    
+    height: auto; /* Adjust height based on content */
+    padding: 10px; /* Padding */
+    box-sizing: border-box; /* Include padding in width/height */
+    background-color: #ffffff; /* Background color */
+    overflow: hidden; /* Prevent overflow */
+    display: flex; /* Enable flexbox */
+    flex-direction: row; /* Stack carousels vertically */
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
+    margin-left: 20px; /* Space from other content */
+    margin-top: 15%; /* Add margin to lower the container */
+	
+	border: 15px solid #002147; /* Dark blue border */
+    border-radius: 10px; /* Rounded corners if desired */
+}
+
+.call-to-action {
+    background-color: #f0f8ff; /* Light blue background */
+    border: 2px solid #002147; /* Dark blue border */
+    border-radius: 10px; /* Rounded corners */
+    padding: 20px; /* Padding for spacing */
+    text-align: center; /* Centered text */
+}
+
+.call-to-action h2 {
+    color: #002147; /* Dark blue text */
+    margin-bottom: 10px; /* Space below heading */
+}
+
+.call-to-action p {
+    color: #333; /* Dark gray text */
+    margin-bottom: 20px; /* Space below paragraph */
+}
+
+.cta-button {
+    display: inline-block; /* Make it an inline block for padding */
+    padding: 10px 20px; /* Padding for button */
+    background-color: #002147; /* Dark blue background */
+    color: white; /* White text */
+    text-decoration: none; /* No underline */
+    border-radius: 5px; /* Rounded corners */
+    transition: background-color 0.3s; /* Smooth background color change */
+}
+
+.cta-button:hover {
+    background-color: #004a85; /* Darker blue on hover */
+}
+
+.call-to-action-wrapper{
+	margin-top:15px;
+	margin-bottom:30px;
+}
+
+
+    </style>
+    <link rel="shortcut icon" sizes="16x16" href="images/favicon16x16.ico">
+    <link rel="shortcut icon" sizes="32x32" href="images/favicon32x32.ico">
+    <link rel="shortcut icon" sizes="96x96" href="images/favicon96x96.ico">
+    <link rel="shortcut icon" sizes="192x192" href="images/favicon192x192.ico">
+	
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
+    <!-- Load Slick Carousel CSS -->
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.css"/>
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick-theme.min.css"/>
+    
+    <!-- Load Slick Carousel JS -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.js"></script>
+	
+	<script src="//code.jivosite.com/widget/VM5EFhMDyu" async></script>
+
+</head>
+<body>
+    <header>
+        <img src="images/logo.png" alt="Logo Mazola EPI">
+        <h1>Bem-vindo à Mazola EPI</h1>
+        <nav>
+            <ul>
+                <li><a href="index.html" class="expandable-link">Início</a></li>
+                <li><a href="products.html" class="expandable-link">Produtos</a></li>
+                <li><a href="contato.html" class="expandable-link">Contato</a></li>
+                <li><a href="sobre.html" class="expandable-link">Sobre</a></li>
+            </ul>
+        </nav>
+    </header>
+
+<main>
+<div class="background-image"></div>
+    <h2>Sobre Nós</h2>
+    <p>A <strong>Mazola EPI</strong> foi fundada por <strong>Mozart Campos Pereira</strong> há mais de 16 anos e desde então se consolidou como uma das maiores fornecedoras de equipamentos de proteção individual (EPIs) em todo o Brasil.</p>
+
+    <p>Especialistas em <strong>cintas ergonômicas</strong>, oferecemos produtos de altíssima qualidade, reconhecidos como os melhores do mercado. Nossa missão é garantir segurança e conforto para nossos clientes, que confiam na durabilidade e eficácia de nossos produtos.</p>
+
+    <p>Além das cintas ergonômicas, também comercializamos uma ampla gama de EPIs, incluindo:</p>
+    <ul>
+        <li><strong>Cinto de Carpinteiro</strong></li>
+        <li><strong>Cinto de Eletricista</strong></li>
+        <li><strong>Bainha para Facão</strong></li>
+        <li><strong>Bainha para Canivete</strong></li>
+        <li><strong>Chapéu Australiano</strong></li>
+        <li><strong>Boné com Casquete de Proteção</strong></li>
+    </ul>
+
+    <p>Nosso compromisso é com a segurança e a qualidade, atendendo a clientes de todas as regiões do Brasil. A Mazola EPI é sinônimo de confiança no mercado de EPIs, sempre inovando e buscando oferecer os melhores produtos disponíveis.</p>
+	
+	<section>
+	<div class="call-to-action-wrapper">
+	<div class="call-to-action">
+		<h2>Tem Dúvidas? Estamos Aqui para Ajudar!</h2>
+		<p>Entre em contato com nossos atendentes e descubra como nossos produtos podem atender suas necessidades de segurança e conforto.</p>
+		<a href="contato.html" class="cta-button">Fale Conosco</a>
+	</div>
+	</div>
+	</section>
+</main>
+
+
+    <footer>
+        <!-- Section 1: Logo and Address -->
+        <div class="section address-section">
+            <img src="images/logo.png" alt="Logo Mazola EPI" class="logo">
+            <p>Av. Gov. Bias Fortes, 620 - Pontilhão,</p>
+            <p>Barbacena - MG, 36204-168</p>
+        </div>
+
+        <!-- Section 2: Emails -->
+        <div class="section" id="email-section">
+            <h3>
+                <img src="images/email.png" alt="Email Icon">E-mails de Contato
+            </h3>
+            <ul id="email-list">
+                <li>comercialmazola1@mazolaepi.com.br</li>
+                <li>comercialmazola2@mazolaepi.com.br</li>
+                <li>comercialmazola4@mazolaepi.com.br</li>
+                <li>comercialmazola6@mazolaepi.com.br</li>
+                <li>comercialmazola7@mazolaepi.com.br</li>
+                <li>comercialmazola8@mazolaepi.com.br</li>
+				<li>comercial10@mazolaepi.com.br</li>
+				<li>mozart@mazolaepi.com.br</li>
+				<li>edvar@mazolaepi.com.br</li>
+				<li>geisimara@mazolaepi.com.br</li>
+            </ul>
+        </div>
+		<!-- Section 3: Phones -->
+        <div class="section" id="phone-section">
+            <h3>
+                <img src="images/phone.png" alt="Phone Icon">Telefones de Contato
+            </h3>
+            <ul id="phone-list">
+                <li>(32) 3400-7201</li>
+                <li>(32) 3400-7202</li>
+                <li>(32) 3400-7203</li>
+                <li>(32) 3400-7205</li>
+                <li>(32) 3400-7206</li>
+                <li>(32) 3400-7207</li>
+                <li>(32) 3400-7209</li>
+            </ul>
+        </div>
+    </footer>
+</body>
+</html>
