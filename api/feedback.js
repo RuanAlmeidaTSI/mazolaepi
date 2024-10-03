@@ -38,7 +38,7 @@ export default async function handler(req, res) {
                     text-align: center;
                 }
                 h1 {
-                    color: white;
+                    color: black;
                 }
                 .content {
                     padding: 20px;
@@ -46,7 +46,7 @@ export default async function handler(req, res) {
                 }
                 footer {
                     background-color: #000;
-                    color: white;
+                    color: black;
                     padding: 20px;
                     text-align: center;
                     margin-top: auto;
@@ -98,7 +98,7 @@ export default async function handler(req, res) {
                     text-align: center;
                 }
                 h1 {
-                    color: white;
+                    color: black;
                 }
                 .content {
                     padding: 20px;
@@ -106,7 +106,7 @@ export default async function handler(req, res) {
                 }
                 footer {
                     background-color: #000;
-                    color: white;
+                    color: black;
                     padding: 20px;
                     text-align: center;
                     margin-top: auto;
@@ -150,7 +150,7 @@ export default async function handler(req, res) {
                     text-align: center;
                 }
                 h1 {
-                    color: white;
+                    color: black;
                 }
                 .content {
                     padding: 20px;
@@ -158,7 +158,7 @@ export default async function handler(req, res) {
                 }
                 footer {
                     background-color: #000;
-                    color: white;
+                    color: black;
                     padding: 20px;
                     text-align: center;
                     margin-top: auto;
@@ -206,7 +206,7 @@ export default async function handler(req, res) {
                     text-align: center;
                 }
                 h1 {
-                    color: white;
+                    color: black;
                 }
                 .content {
                     padding: 20px;
@@ -214,7 +214,7 @@ export default async function handler(req, res) {
                 }
                 footer {
                     background-color: #000;
-                    color: white;
+                    color: black;
                     padding: 20px;
                     text-align: center;
                     margin-top: auto;
@@ -257,7 +257,7 @@ export default async function handler(req, res) {
                     text-align: center;
                 }
                 h1 {
-                    color: white;
+                    color: black;
                 }
                 .content {
                     padding: 20px;
@@ -265,7 +265,7 @@ export default async function handler(req, res) {
                 }
                 footer {
                     background-color: #000;
-                    color: white;
+                    color: black;
                     padding: 20px;
                     text-align: center;
                     margin-top: auto;
