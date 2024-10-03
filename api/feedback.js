@@ -6,56 +6,48 @@ const supabaseKey = process.env.SUPABASE_KEY;
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 export default async function handler(req, res) {
-    const { rating, email } = req.query;
+    const { rating, email, opt_out } = req.query;
     const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
 
-    // Validate inputs
-    if (!rating || !email) {
+    // Validate email
+    if (!email) {
         return res.status(400).send(`
             <html lang="pt-BR">
-                    <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Mazola EPI</title>
-            <link rel="shortcut icon" sizes="16x16" href="../images/favicon16x16.ico">
-            <link rel="shortcut icon" sizes="32x32" href="../images/favicon32x32.ico">
-            <link rel="shortcut icon" sizes="96x96" href="../images/favicon96x96.ico">
-            <link rel="shortcut icon" sizes="192x192" href="../images/favicon192x192.ico">
-            <style>
-                body {
-                    font-family: Arial, sans-serif;
-                    margin: 0;
-                    padding: 0;
-                    background-color: #f0f8ff;
-                    color: #000;
-                    min-height: 100vh;
-                    display: flex;
-                    flex-direction: column;
-                }
-                header {
-                    background-color: #000;
-                    padding: 20px;
-                    text-align: center;
-                }
-                h1 {
-                    color: black;
-                }
-                .content {
-                    padding: 20px;
-                    text-align: center;
-                }
-                footer {
-                    background-color: #000;
-                    color: black;
-                    padding: 20px;
-                    text-align: center;
-                    margin-top: auto;
-                }
-            </style>
-        </head>
+            <head><style>body { font-family: Arial, sans-serif; }</style></head>
             <body>
                 <h1>Erro: Entrada inválida</h1>
-                <p>Por favor, forneça uma avaliação válida e o seu email.</p>
+                <p>Por favor, forneça um email válido.</p>
+            </body>
+            </html>
+        `);
+    }
+
+    // If the user opted out
+    if (opt_out === "true") {
+        // Update the user's opt_out status in the database
+        const { error: updateError } = await supabase
+            .from('feedback')
+            .update({ opt_out: true })
+            .eq('email', email);
+
+        if (updateError) {
+            return res.status(500).send(`
+                <html lang="pt-BR">
+                <head><style>body { font-family: Arial, sans-serif; }</style></head>
+                <body>
+                    <h1>Erro ao atualizar suas preferências</h1>
+                    <p>Ocorreu um problema ao processar seu pedido de cancelamento.</p>
+                </body>
+                </html>
+            `);
+        }
+
+        return res.status(200).send(`
+            <html lang="pt-BR">
+            <head><style>body { font-family: Arial, sans-serif; }</style></head>
+            <body>
+                <h1>Você foi desinscrito!</h1>
+                <p>Você não receberá mais essa pesquisa. Obrigado pelo seu tempo.</p>
             </body>
             </html>
         `);
@@ -73,46 +65,7 @@ export default async function handler(req, res) {
     if (selectError) {
         return res.status(500).send(`
             <html lang="pt-BR">
-                   <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Mazola EPI</title>
-            <link rel="shortcut icon" sizes="16x16" href="../images/favicon16x16.ico">
-            <link rel="shortcut icon" sizes="32x32" href="../images/favicon32x32.ico">
-            <link rel="shortcut icon" sizes="96x96" href="../images/favicon96x96.ico">
-            <link rel="shortcut icon" sizes="192x192" href="../images/favicon192x192.ico">
-            <style>
-                body {
-                    font-family: Arial, sans-serif;
-                    margin: 0;
-                    padding: 0;
-                    background-color: #f0f8ff;
-                    color: #000;
-                    min-height: 100vh;
-                    display: flex;
-                    flex-direction: column;
-                }
-                header {
-                    background-color: #000;
-                    padding: 20px;
-                    text-align: center;
-                }
-                h1 {
-                    color: black;
-                }
-                .content {
-                    padding: 20px;
-                    text-align: center;
-                }
-                footer {
-                    background-color: #000;
-                    color: black;
-                    padding: 20px;
-                    text-align: center;
-                    margin-top: auto;
-                }
-            </style>
-        </head>
+            <head><style>body { font-family: Arial, sans-serif; }</style></head>
             <body>
                 <h1>Erro ao verificar o feedback</h1>
                 <p>Ocorreu um problema ao verificar seu feedback. Tente novamente mais tarde.</p>
@@ -125,46 +78,7 @@ export default async function handler(req, res) {
     if (existingFeedback && existingFeedback.length > 0) {
         return res.status(400).send(`
             <html lang="pt-BR">
-                    <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Mazola EPI</title>
-            <link rel="shortcut icon" sizes="16x16" href="../images/favicon16x16.ico">
-            <link rel="shortcut icon" sizes="32x32" href="../images/favicon32x32.ico">
-            <link rel="shortcut icon" sizes="96x96" href="../images/favicon96x96.ico">
-            <link rel="shortcut icon" sizes="192x192" href="../images/favicon192x192.ico">
-            <style>
-                body {
-                    font-family: Arial, sans-serif;
-                    margin: 0;
-                    padding: 0;
-                    background-color: #f0f8ff;
-                    color: #000;
-                    min-height: 100vh;
-                    display: flex;
-                    flex-direction: column;
-                }
-                header {
-                    background-color: #000;
-                    padding: 20px;
-                    text-align: center;
-                }
-                h1 {
-                    color: black;
-                }
-                .content {
-                    padding: 20px;
-                    text-align: center;
-                }
-                footer {
-                    background-color: #000;
-                    color: black;
-                    padding: 20px;
-                    text-align: center;
-                    margin-top: auto;
-                }
-            </style>
-        </head>
+            <head><style>body { font-family: Arial, sans-serif; }</style></head>
             <body>
                 <h1>Você já avaliou hoje</h1>
                 <p>Você já enviou uma avaliação hoje. Por favor, tente novamente amanhã.</p>
@@ -174,53 +88,14 @@ export default async function handler(req, res) {
     }
 
     // Insert new feedback
-    const { data, error: insertError } = await supabase
+    const { error: insertError } = await supabase
         .from('feedback')
-        .insert([{ email, rating, ip_address: ip }]);
+        .insert([{ email, rating, ip_address: ip, opt_out: false }]); // Set opt_out to false by default
 
     if (insertError) {
         return res.status(500).send(`
             <html lang="pt-BR">
-                    <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Mazola EPI</title>
-            <link rel="shortcut icon" sizes="16x16" href="../images/favicon16x16.ico">
-            <link rel="shortcut icon" sizes="32x32" href="../images/favicon32x32.ico">
-            <link rel="shortcut icon" sizes="96x96" href="../images/favicon96x96.ico">
-            <link rel="shortcut icon" sizes="192x192" href="../images/favicon192x192.ico">
-            <style>
-                body {
-                    font-family: Arial, sans-serif;
-                    margin: 0;
-                    padding: 0;
-                    background-color: #f0f8ff;
-                    color: #000;
-                    min-height: 100vh;
-                    display: flex;
-                    flex-direction: column;
-                }
-                header {
-                    background-color: #000;
-                    padding: 20px;
-                    text-align: center;
-                }
-                h1 {
-                    color: black;
-                }
-                .content {
-                    padding: 20px;
-                    text-align: center;
-                }
-                footer {
-                    background-color: #000;
-                    color: black;
-                    padding: 20px;
-                    text-align: center;
-                    margin-top: auto;
-                }
-            </style>
-        </head>
+            <head><style>body { font-family: Arial, sans-serif; }</style></head>
             <body>
                 <h1>Erro ao salvar seu feedback</h1>
                 <p>Ocorreu um problema ao salvar seu feedback. Tente novamente mais tarde.</p>
@@ -232,46 +107,7 @@ export default async function handler(req, res) {
     // Return a thank-you page if feedback was successfully inserted
     return res.status(200).send(`
         <html lang="pt-BR">
-                <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Mazola EPI</title>
-            <link rel="shortcut icon" sizes="16x16" href="../images/favicon16x16.ico">
-            <link rel="shortcut icon" sizes="32x32" href="../images/favicon32x32.ico">
-            <link rel="shortcut icon" sizes="96x96" href="../images/favicon96x96.ico">
-            <link rel="shortcut icon" sizes="192x192" href="../images/favicon192x192.ico">
-            <style>
-                body {
-                    font-family: Arial, sans-serif;
-                    margin: 0;
-                    padding: 0;
-                    background-color: #f0f8ff;
-                    color: #000;
-                    min-height: 100vh;
-                    display: flex;
-                    flex-direction: column;
-                }
-                header {
-                    background-color: #000;
-                    padding: 20px;
-                    text-align: center;
-                }
-                h1 {
-                    color: black;
-                }
-                .content {
-                    padding: 20px;
-                    text-align: center;
-                }
-                footer {
-                    background-color: #000;
-                    color: black;
-                    padding: 20px;
-                    text-align: center;
-                    margin-top: auto;
-                }
-            </style>
-        </head>
+        <head><style>body { font-family: Arial, sans-serif; }</style></head>
         <body>
             <h1>Obrigado pelo seu feedback!</h1>
             <p>Agradecemos a sua avaliação. Isso nos ajuda a melhorar os nossos serviços.</p>
@@ -279,4 +115,3 @@ export default async function handler(req, res) {
         </html>
     `);
 }
-
