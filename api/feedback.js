@@ -147,4 +147,18 @@ export default async function handler(req, res) {
                 <h1>Erro ao salvar seu feedback</h1>
                 <p>Ocorreu um problema ao salvar seu feedback. Tente novamente mais tarde.</p>
             </body>
-            </
+            </html>
+        `);
+    }
+
+    // Return a thank-you page if feedback was successfully inserted
+    return res.status(200).send(`
+        <html lang="pt-BR">
+        <head><style>body { font-family: Arial, sans-serif; }</style></head>
+        <body>
+            <h1>Obrigado pelo seu feedback!</h1>
+            <p>Agradecemos a sua avaliação. Isso nos ajuda a melhorar os nossos serviços.</p>
+        </body>
+        </html>
+    `);
+}
