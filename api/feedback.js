@@ -22,82 +22,33 @@ export default async function handler(req, res) {
         `);
     }
 
-    // Check if the user exists in the table
-    const { data: userData, error: userError } = await supabase
-        .from('feedback')
-        .select('*')
-        .eq('email', email);
-
-    if (userError) {
-        return res.status(500).send(`
-            <html lang="pt-BR">
-            <head><style>body { font-family: Arial, sans-serif; }</style></head>
-            <body>
-                <h1>Erro ao verificar o usuário</h1>
-                <p>Ocorreu um problema ao verificar seus dados. Tente novamente mais tarde.</p>
-            </body>
-            </html>
-        `);
-    }
-
-    // If the user opted out
+    // If the user opted out, insert a new record with opt_out set to true
     if (opt_out === "true") {
-        // If user exists, update their opt_out status
-        if (userData.length > 0) {
-            const { error: updateError } = await supabase
-                .from('feedback')
-                .update({ opt_out: true })
-                .eq('email', email);
+        const { error: insertError } = await supabase
+            .from('feedback')
+            .insert([{ email, ip_address: ip, opt_out: true }]); // Insert a new opt-out record
 
-            if (updateError) {
-                return res.status(500).send(`
-                    <html lang="pt-BR">
-                    <head><style>body { font-family: Arial, sans-serif; }</style></head>
-                    <body>
-                        <h1>Erro ao atualizar suas preferências</h1>
-                        <p>Ocorreu um problema ao processar seu pedido de cancelamento.</p>
-                    </body>
-                    </html>
-                `);
-            }
-
-            return res.status(200).send(`
+        if (insertError) {
+            return res.status(500).send(`
                 <html lang="pt-BR">
                 <head><style>body { font-family: Arial, sans-serif; }</style></head>
                 <body>
-                    <h1>Você foi desinscrito!</h1>
-                    <p>Você não receberá mais essa pesquisa. Obrigado pelo seu tempo.</p>
-                </body>
-                </html>
-            `);
-        } else {
-            // If user doesn't exist, insert new record with opt_out set to true
-            const { error: insertError } = await supabase
-                .from('feedback')
-                .insert([{ email, ip_address: ip, opt_out: true }]);
-
-            if (insertError) {
-                return res.status(500).send(`
-                    <html lang="pt-BR">
-                    <head><style>body { font-family: Arial, sans-serif; }</style></head>
-                    <body>
-                        <h1>Erro ao salvar suas preferências</h1>
-                        <p>Ocorreu um problema ao processar seu pedido de cancelamento.</p>
-                    </body>
-                    </html>
-                `);
-            }
-
-            return res.status(200).send(`
-                <html lang="pt-BR">
-                <head><style>body { font-family: Arial, sans-serif; }</style></head>
-                <body>
-                    <h1>Você foi desinscrito!</h1>
-                    <p>Você não receberá mais essa pesquisa. Obrigado pelo seu tempo.</p>
+                    <h1>Erro ao salvar suas preferências</h1>
+                    <p>Ocorreu um problema ao processar seu pedido de cancelamento.</p>
                 </body>
                 </html>
             `);
         }
+
+        return res.status(200).send(`
+            <html lang="pt-BR">
+            <head><style>body { font-family: Arial, sans-serif; }</style></head>
+            <body>
+                <h1>Você foi desinscrito!</h1>
+                <p>Você não receberá mais essa pesquisa. Obrigado pelo seu tempo.</p>
+            </body>
+            </html>
+        `);
     }
 
     // Check if the user has already submitted feedback today
