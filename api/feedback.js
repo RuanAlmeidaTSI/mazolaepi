@@ -27,13 +27,13 @@ export default async function handler(req, res) {
                     margin: 0;
                     padding: 0;
                     background-color: #f0f8ff;
-                    color: #002147;
+                    color: #000;
                     min-height: 100vh;
                     display: flex;
                     flex-direction: column;
                 }
                 header {
-                    background-color: #002147;
+                    background-color: #000;
                     padding: 20px;
                     text-align: center;
                 }
@@ -45,7 +45,7 @@ export default async function handler(req, res) {
                     text-align: center;
                 }
                 footer {
-                    background-color: #002147;
+                    background-color: #000;
                     color: white;
                     padding: 20px;
                     text-align: center;
@@ -87,13 +87,13 @@ export default async function handler(req, res) {
                     margin: 0;
                     padding: 0;
                     background-color: #f0f8ff;
-                    color: #002147;
+                    color: #000;
                     min-height: 100vh;
                     display: flex;
                     flex-direction: column;
                 }
                 header {
-                    background-color: #002147;
+                    background-color: #000;
                     padding: 20px;
                     text-align: center;
                 }
@@ -105,7 +105,7 @@ export default async function handler(req, res) {
                     text-align: center;
                 }
                 footer {
-                    background-color: #002147;
+                    background-color: #000;
                     color: white;
                     padding: 20px;
                     text-align: center;
@@ -139,13 +139,13 @@ export default async function handler(req, res) {
                     margin: 0;
                     padding: 0;
                     background-color: #f0f8ff;
-                    color: #002147;
+                    color: #000;
                     min-height: 100vh;
                     display: flex;
                     flex-direction: column;
                 }
                 header {
-                    background-color: #002147;
+                    background-color: #000;
                     padding: 20px;
                     text-align: center;
                 }
@@ -157,7 +157,7 @@ export default async function handler(req, res) {
                     text-align: center;
                 }
                 footer {
-                    background-color: #002147;
+                    background-color: #000;
                     color: white;
                     padding: 20px;
                     text-align: center;
@@ -195,13 +195,13 @@ export default async function handler(req, res) {
                     margin: 0;
                     padding: 0;
                     background-color: #f0f8ff;
-                    color: #002147;
+                    color: #000;
                     min-height: 100vh;
                     display: flex;
                     flex-direction: column;
                 }
                 header {
-                    background-color: #002147;
+                    background-color: #000;
                     padding: 20px;
                     text-align: center;
                 }
@@ -213,7 +213,7 @@ export default async function handler(req, res) {
                     text-align: center;
                 }
                 footer {
-                    background-color: #002147;
+                    background-color: #000;
                     color: white;
                     padding: 20px;
                     text-align: center;
@@ -246,13 +246,13 @@ export default async function handler(req, res) {
                     margin: 0;
                     padding: 0;
                     background-color: #f0f8ff;
-                    color: #002147;
+                    color: #000;
                     min-height: 100vh;
                     display: flex;
                     flex-direction: column;
                 }
                 header {
-                    background-color: #002147;
+                    background-color: #000;
                     padding: 20px;
                     text-align: center;
                 }
@@ -264,7 +264,7 @@ export default async function handler(req, res) {
                     text-align: center;
                 }
                 footer {
-                    background-color: #002147;
+                    background-color: #000;
                     color: white;
                     padding: 20px;
                     text-align: center;
