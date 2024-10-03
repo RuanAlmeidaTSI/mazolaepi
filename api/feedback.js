@@ -22,35 +22,82 @@ export default async function handler(req, res) {
         `);
     }
 
+    // Check if the user exists in the table
+    const { data: userData, error: userError } = await supabase
+        .from('feedback')
+        .select('*')
+        .eq('email', email);
+
+    if (userError) {
+        return res.status(500).send(`
+            <html lang="pt-BR">
+            <head><style>body { font-family: Arial, sans-serif; }</style></head>
+            <body>
+                <h1>Erro ao verificar o usuário</h1>
+                <p>Ocorreu um problema ao verificar seus dados. Tente novamente mais tarde.</p>
+            </body>
+            </html>
+        `);
+    }
+
     // If the user opted out
     if (opt_out === "true") {
-        // Update the user's opt_out status in the database
-        const { error: updateError } = await supabase
-            .from('feedback')
-            .update({ opt_out: true })
-            .eq('email', email);
+        // If user exists, update their opt_out status
+        if (userData.length > 0) {
+            const { error: updateError } = await supabase
+                .from('feedback')
+                .update({ opt_out: true })
+                .eq('email', email);
 
-        if (updateError) {
-            return res.status(500).send(`
+            if (updateError) {
+                return res.status(500).send(`
+                    <html lang="pt-BR">
+                    <head><style>body { font-family: Arial, sans-serif; }</style></head>
+                    <body>
+                        <h1>Erro ao atualizar suas preferências</h1>
+                        <p>Ocorreu um problema ao processar seu pedido de cancelamento.</p>
+                    </body>
+                    </html>
+                `);
+            }
+
+            return res.status(200).send(`
                 <html lang="pt-BR">
                 <head><style>body { font-family: Arial, sans-serif; }</style></head>
                 <body>
-                    <h1>Erro ao atualizar suas preferências</h1>
-                    <p>Ocorreu um problema ao processar seu pedido de cancelamento.</p>
+                    <h1>Você foi desinscrito!</h1>
+                    <p>Você não receberá mais essa pesquisa. Obrigado pelo seu tempo.</p>
+                </body>
+                </html>
+            `);
+        } else {
+            // If user doesn't exist, insert new record with opt_out set to true
+            const { error: insertError } = await supabase
+                .from('feedback')
+                .insert([{ email, ip_address: ip, opt_out: true }]);
+
+            if (insertError) {
+                return res.status(500).send(`
+                    <html lang="pt-BR">
+                    <head><style>body { font-family: Arial, sans-serif; }</style></head>
+                    <body>
+                        <h1>Erro ao salvar suas preferências</h1>
+                        <p>Ocorreu um problema ao processar seu pedido de cancelamento.</p>
+                    </body>
+                    </html>
+                `);
+            }
+
+            return res.status(200).send(`
+                <html lang="pt-BR">
+                <head><style>body { font-family: Arial, sans-serif; }</style></head>
+                <body>
+                    <h1>Você foi desinscrito!</h1>
+                    <p>Você não receberá mais essa pesquisa. Obrigado pelo seu tempo.</p>
                 </body>
                 </html>
             `);
         }
-
-        return res.status(200).send(`
-            <html lang="pt-BR">
-            <head><style>body { font-family: Arial, sans-serif; }</style></head>
-            <body>
-                <h1>Você foi desinscrito!</h1>
-                <p>Você não receberá mais essa pesquisa. Obrigado pelo seu tempo.</p>
-            </body>
-            </html>
-        `);
     }
 
     // Check if the user has already submitted feedback today
@@ -100,18 +147,4 @@ export default async function handler(req, res) {
                 <h1>Erro ao salvar seu feedback</h1>
                 <p>Ocorreu um problema ao salvar seu feedback. Tente novamente mais tarde.</p>
             </body>
-            </html>
-        `);
-    }
-
-    // Return a thank-you page if feedback was successfully inserted
-    return res.status(200).send(`
-        <html lang="pt-BR">
-        <head><style>body { font-family: Arial, sans-serif; }</style></head>
-        <body>
-            <h1>Obrigado pelo seu feedback!</h1>
-            <p>Agradecemos a sua avaliação. Isso nos ajuda a melhorar os nossos serviços.</p>
-        </body>
-        </html>
-    `);
-}
+            </
