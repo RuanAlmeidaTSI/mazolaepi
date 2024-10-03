@@ -1,0 +1,15 @@
+{
+  "name": "mazolaepi-feedback",
+  "version": "1.0.0",
+  "description": "Feedback collection for Mazola EPI",
+  "main": "index.js",
+  "scripts": {
+    "start": "vercel dev"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.0.0"
+  },
+  "engines": {
+    "node": "16.x"
+  }
+}
