@@ -6,7 +6,7 @@ const supabaseKey = process.env.SUPABASE_KEY;
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 export default async function handler(req, res) {
-    const { rating, email, opt_out } = req.query;
+    const { name, rating, email, opt_out } = req.query;
     const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
 
     // Validate email
@@ -26,7 +26,7 @@ export default async function handler(req, res) {
     if (opt_out === "true") {
         const { error: insertError } = await supabase
             .from('feedback')
-            .insert([{ email, rating, ip_address: ip, opt_out: true }]); // Insert a new opt-out record
+            .insert([{ name, email, rating, ip_address: ip, opt_out: true }]); // Insert a new opt-out record
 
         if (insertError) {
             return res.status(500).send(`
@@ -88,7 +88,7 @@ export default async function handler(req, res) {
     // Insert new feedback
     const { error: insertError } = await supabase
         .from('feedback')
-        .insert([{ email, rating, ip_address: ip, opt_out: false }]); // Set opt_out to false by default
+        .insert([{ name, email, rating, ip_address: ip, opt_out: false }]); // Set opt_out to false by default
 
     if (insertError) {
         return res.status(500).send(`
