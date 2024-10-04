@@ -96,7 +96,7 @@ export default async function handler(req, res) {
             <head><style>body { font-family: Arial, sans-serif; }</style></head>
             <body>
                 <h1>Erro ao salvar seu feedback</h1>
-                <p>Ocorreu um problema ao salvar seu feedback. Tente novamente mais tarde.</p>
+                  <p>Ocorreu um problema ao salvar seu feedback: ${insertError.message}</p> <!-- Show error message -->
             </body>
             </html>
         `);
