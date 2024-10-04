@@ -24,7 +24,7 @@ export default async function handler(req, res) {
 
     // If the user opted out, insert a new record with opt_out set to true
     if (opt_out === "true") {
-        rating_2 = 0;
+        int rating_2 = 0;
         const { error: insertError } = await supabase
             .from('feedback')
             .insert([{ email, rating_2, ip_address: ip, opt_out: true }]); // Insert a new opt-out record
