@@ -3,37 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Catalogue</title>
+    <title>Catálogo - Marilza</title>
     <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+        }
+        .catalogue {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 10px;
+            padding: 10px;
+            align-items: center;
+            justify-items: center;
+        }
         img {
             max-width: 100%;
             height: auto;
             display: block;
-            margin: 0 auto;
-        }
-        .catalogue {
-            text-align: center;
+            border-radius: 8px; /* Optional: rounded corners */
         }
     </style>
 </head>
 <body>
     <div class="catalogue">
-        <img src="1.jpg" alt="Page 1">
-        <img src="2.jpg" alt="Page 2">
-        <img src="3.jpg" alt="Page 3">
-        <img src="4.jpg" alt="Page 3">
-        <img src="5.jpg" alt="Page 3">
-        <img src="6.jpg" alt="Page 3">
-        <img src="7.jpg" alt="Page 3">
-        <img src="8.jpg" alt="Page 3">
-        <img src="9.jpg" alt="Page 3">
-        <img src="10.jpg" alt="Page 3">
-        <img src="11.jpg" alt="Page 3">
-        <img src="12.jpg" alt="Page 3">
-        <img src="13.jpg" alt="Page 3">
-        <img src="14.jpg" alt="Page 3">
-        <img src="15.jpg" alt="Page 3">
-        <img src="16.jpg" alt="Page 16">
+        <img src="1.jpg" alt="Page 1" loading="lazy">
+        <img src="2.jpg" alt="Page 2" loading="lazy">
+        <img src="3.jpg" alt="Page 3" loading="lazy">
+        <img src="4.jpg" alt="Page 4" loading="lazy">
+        <img src="5.jpg" alt="Page 5" loading="lazy">
+        <img src="6.jpg" alt="Page 6" loading="lazy">
+        <img src="7.jpg" alt="Page 7" loading="lazy">
+        <img src="8.jpg" alt="Page 8" loading="lazy">
+        <img src="9.jpg" alt="Page 9" loading="lazy">
+        <img src="10.jpg" alt="Page 10" loading="lazy">
+        <img src="11.jpg" alt="Page 11" loading="lazy">
+        <img src="12.jpg" alt="Page 12" loading="lazy">
+        <img src="13.jpg" alt="Page 13" loading="lazy">
+        <img src="14.jpg" alt="Page 14" loading="lazy">
+        <img src="15.jpg" alt="Page 15" loading="lazy">
+        <img src="16.jpg" alt="Page 16" loading="lazy">
     </div>
 </body>
 </html>
