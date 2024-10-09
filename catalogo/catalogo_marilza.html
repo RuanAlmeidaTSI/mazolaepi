@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Catálogo - Marilza</title>
+    <title>Catalogue</title>
     <style>
         body {
             margin: 0;
@@ -11,17 +11,16 @@
             background-color: #f4f4f4;
         }
         .catalogue {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center; /* Center images horizontally */
             padding: 10px;
-            align-items: center;
-            justify-items: center;
         }
         img {
             max-width: 100%;
             height: auto;
             display: block;
+            margin: 10px 0; /* Space between images */
             border-radius: 8px; /* Optional: rounded corners */
         }
     </style>
