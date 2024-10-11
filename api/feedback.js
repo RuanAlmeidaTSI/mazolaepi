@@ -9,51 +9,82 @@ export default async function handler(req, res) {
     const { name, rating, email, opt_out } = req.query;
     const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
 
+    // Common HTML structure with styles
+    const commonHtmlHead = `
+        <html lang="pt-BR">
+        <head>
+            <title>Mazola EPI</title>
+            <style>
+                body {
+                    font-family: Arial, sans-serif;
+                    background-color: #f0f8ff;
+                    color: #002147;
+                    text-align: center;
+                }
+                .message {
+                    font-weight: bold;
+                    margin-top: 20px;
+                }
+                .logo {
+                    margin-top: 50px;
+                }
+            </style>
+            <link rel="shortcut icon" sizes="16x16" href="../images/favicon16x16.ico"> 
+            <link rel="shortcut icon" sizes="32x32" href="../images/favicon32x32.ico">
+            <link rel="shortcut icon" sizes="96x96" href="../images/favicon96x96.ico">
+            <link rel="shortcut icon" sizes="192x192" href="../images/favicon192x192.ico">
+        </head>
+        <body>
+            <div class="logo">
+                <img src="../images/logo.png" alt="Mazola EPI Logo">
+            </div>
+    `;
+
     // Validate email
     if (!email) {
         return res.status(400).send(`
-            <html lang="pt-BR">
-            <head><style>body { font-family: Arial, sans-serif; }</style></head>
-            <body>
+            ${commonHtmlHead}
+            <div class="message">
                 <h1>Erro: Entrada inválida</h1>
                 <p>Por favor, forneça um email válido.</p>
-            </body>
-            </html>
+            </div>
+        </body>
+        </html>
         `);
     }
 
-    // If the user opted out, insert a new record with opt_out set to true
+    // If the user opted out
     if (opt_out === "true") {
         const { error: insertError } = await supabase
             .from('feedback')
-            .insert([{ name, email, rating, ip_address: ip, opt_out: true }]); // Insert a new opt-out record
+            .insert([{ name, email, rating, ip_address: ip, opt_out: true }]);
 
         if (insertError) {
             return res.status(500).send(`
-                <html lang="pt-BR">
-                <head><style>body { font-family: Arial, sans-serif; }</style></head>
-                <body>
+                ${commonHtmlHead}
+                <div class="message">
                     <h1>Erro ao salvar suas preferências</h1>
                     <p>Ocorreu um problema ao processar seu pedido de cancelamento.</p>
-                </body>
-                </html>
+                </div>
+            </body>
+            </html>
             `);
         }
 
         return res.status(200).send(`
-            <html lang="pt-BR">
-            <head><style>body { font-family: Arial, sans-serif; }</style></head>
-            <body>
+            ${commonHtmlHead}
+            <div class="message">
                 <h1>Você foi desinscrito!</h1>
                 <p>Você não receberá mais essa pesquisa. Obrigado pelo seu tempo.</p>
-            </body>
-            </html>
+            </div>
+        </body>
+        </html>
         `);
     }
 
     // Check if the user has already submitted feedback today
-    const today = new Date().toISOString().split('T')[0]; // Get current date (YYYY-MM-DD)
-    
+    const today = new Date().toISOString().split('T')[0];
+
     const { data: existingFeedback, error: selectError } = await supabase
         .from('feedback')
         .select('*')
@@ -62,54 +93,54 @@ export default async function handler(req, res) {
 
     if (selectError) {
         return res.status(500).send(`
-            <html lang="pt-BR">
-            <head><style>body { font-family: Arial, sans-serif; }</style></head>
-            <body>
+            ${commonHtmlHead}
+            <div class="message">
                 <h1>Erro ao verificar o feedback</h1>
                 <p>Ocorreu um problema ao verificar seu feedback. Tente novamente mais tarde.</p>
-            </body>
-            </html>
+            </div>
+        </body>
+        </html>
         `);
     }
 
-    // If feedback exists for today, do not allow another submission
+    // If feedback exists for today
     if (existingFeedback && existingFeedback.length > 0) {
         return res.status(400).send(`
-            <html lang="pt-BR">
-            <head><style>body { font-family: Arial, sans-serif; }</style></head>
-            <body>
+            ${commonHtmlHead}
+            <div class="message">
                 <h1>Você já avaliou hoje</h1>
                 <p>Você já enviou uma avaliação hoje. Por favor, tente novamente amanhã.</p>
-            </body>
-            </html>
+            </div>
+        </body>
+        </html>
         `);
     }
 
     // Insert new feedback
     const { error: insertError } = await supabase
         .from('feedback')
-        .insert([{ name, email, rating, ip_address: ip, opt_out: false }]); // Set opt_out to false by default
+        .insert([{ name, email, rating, ip_address: ip, opt_out: false }]);
 
     if (insertError) {
         return res.status(500).send(`
-            <html lang="pt-BR">
-            <head><style>body { font-family: Arial, sans-serif; }</style></head>
-            <body>
+            ${commonHtmlHead}
+            <div class="message">
                 <h1>Erro ao salvar seu feedback</h1>
-                  <p>Ocorreu um problema ao salvar seu feedback: ${insertError.message}</p> <!-- Show error message -->
-            </body>
-            </html>
+                <p>Ocorreu um problema ao salvar seu feedback: ${insertError.message}</p>
+            </div>
+        </body>
+        </html>
         `);
     }
 
-    // Return a thank-you page if feedback was successfully inserted
+    // Return a thank-you page
     return res.status(200).send(`
-        <html lang="pt-BR">
-        <head><style>body { font-family: Arial, sans-serif; }</style></head>
-        <body>
+        ${commonHtmlHead}
+        <div class="message">
             <h1>Obrigado pelo seu feedback!</h1>
             <p>Agradecemos a sua avaliação. Isso nos ajuda a melhorar os nossos serviços.</p>
-        </body>
-        </html>
+        </div>
+    </body>
+    </html>
     `);
 }
