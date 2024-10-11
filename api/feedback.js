@@ -28,6 +28,11 @@ export default async function handler(req, res) {
                 .logo {
                     margin-top: 50px;
                 }
+                .logo img {
+    width: 150px; /* Adjust the width here */
+    height: auto; /* Keep the aspect ratio */
+    margin-top: 50px;
+}
             </style>
             <link rel="shortcut icon" sizes="16x16" href="../images/favicon16x16.ico"> 
             <link rel="shortcut icon" sizes="32x32" href="../images/favicon32x32.ico">
