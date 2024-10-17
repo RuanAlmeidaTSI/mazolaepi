@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 
 export default function handler(req, res) {
-    const filePath = path.join(process.cwd(), 'public', 'catalogo.pdf');
+    const filePath = path.join(__dirname, 'catalogo.pdf');
 
     // Check if the file exists
     if (!fs.existsSync(filePath)) {
