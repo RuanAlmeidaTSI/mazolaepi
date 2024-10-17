@@ -1,6 +1,19 @@
+import fs from 'fs';
+import path from 'path';
+
 export default function handler(req, res) {
-    const filePath = 'public/catalogo.pdf';
+    const filePath = path.join(process.cwd(), 'public', 'catalogo.pdf');
+
+    // Check if the file exists
+    if (!fs.existsSync(filePath)) {
+        return res.status(404).json({ error: 'File not found' });
+    }
+
+    // Set headers to force download
     res.setHeader('Content-Type', 'application/pdf');
     res.setHeader('Content-Disposition', 'attachment; filename="catalogo.pdf"');
-    res.sendFile(filePath, { root: process.cwd() });
+    
+    // Read the file and send it as response
+    const fileStream = fs.createReadStream(filePath);
+    fileStream.pipe(res);
 }
