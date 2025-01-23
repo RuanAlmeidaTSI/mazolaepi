@@ -1,0 +1,155 @@
+# find ./truco.com.br -type d -exec chmod g+s {} \;
+
+
+# Criptografia
+ssl_enable = YES
+allow_anon_ssl = NO
+force_local_data_ssl = YES
+force_local_logins_ssl = YES
+ssl_tlsv1 = YES
+ssl_sslv2 = NO
+ssl_sslv3 = NO
+rsa_cert_file =/ etc / vsftpd / ssl / cert - exemplo . com . pem
+rsa_private_key_file =/ etc / vsftpd / ssl / private / priv - exemplo . com . pem
+Figura 9.3: Segunrança no FTP
+
+
+
+10.3 Configurando o serviço postfix
+Deve-se agora configurar o arquivo localizado em /etc/postfix/main.cf para garantir o
+funcionamento correto do servidor SMTP. Dentro do arquivo, as seguintes linhas devem
+ser alteradas:
+queue_directory = / var / spool / postfix
+[...]
+myhostname = mail . exemplo . com
+[...]
+mydomain = exemplo . com
+[...]
+myorigin = $mydomain
+[...]
+inet_interfaces = all
+[...]
+inet_protocols = all
+[...]
+mydestination = $myhostname , localhost . $mydomain , localhost , $mydomain
+[...]
+relayhost =
+[...]
+mynetworks = 127.0.0.0/8
+[...]
+home_mailbox = Maildir /
+[...]
+smtpd_banner = $myhostname ESMTP $mail_name
+[...]
+smtpd_sasl_type = dovecot
+smtpd_sasl_path = private / auth
+smtpd_sasl_auth_enable = yes
+smtpd_sasl_security_options = noanonymous
+smtpd_sasl_local_domain =
+[...]
+smtpd_relay_restrictions = permit_sasl_authenticated ,
+reject_unauth_destination
+smtpd_recipient_restrictions = permit_mynetworks ,
+permit_sasl_authenticated , reject_unauth_destination ,
+reject_unknown_helo_hostname
+Figura 10.3: Arquivo main.c
+
+Também deve-se abrir o arquivo localizado em /etc/postfix/master.cf, o qual indica a
+forma como a conexão ao servidor de email será feita, e deve-se descomentar a seguinte
+linha:
+submission inet n - n - - smtpd
+
+# dnf install dovecot
+Logo após, deve-se configurar o serviço dovecot. O primeiro arquivo está localizado
+em vim /etc/dovecot/dovecot.conf, e nele devem ser alteradas as seguintes linhas:;
+[...]
+protocols = imap pop3 lmtp
+[...]
+listen = * , ::
+[...]
+Deve-se agora modificar as opções de autenticação do serviço Dovecot, localizadas no
+arquivo /etc/dovecot/conf.d/10-auth.conf :
+disable_plaintext_auth = no
+auth_mechanisms = plain login
+
+Para ativar a comunicação através da porta 587, abra o arquivo /etc/postfix/master.cf
+e descomente as duas linhas abaixo, se estiverem comentadas:
+smtp inet n - n - - smtpd
+submission inet n - n - - smtpd
+
+10.7 Autenticação ssl
+Para efetivamente se ativar a criptografia através de ssl, abra o arquivo localizado em
+/etc/postfix/main.cf e comente as seguintes linhas (Use 3 cerquilhas para diferenciar
+estas linhas de comentarios normais):
+[...]
+# ## smtpd_tls_cert_file = / etc / pki / tls / certs / postfix . pem
+[...]
+# ## smtpd_tls_key_file = / etc / pki / tls / private / postfix . key
+[...]
+# ## smtpd_tls_security_level = may
+[...]
+Figura 10.10: Arquivo main.cf
+Edite o arquivo “/etc/postfix/main.cf” para adicionar as linhas abaixo, responsáveis pela criptografia.
+# Configurando criptografia
+smtpd_tls_key_file = / etc / httpd / ssl / priv - exemplo . com . pem
+smtpd_tls_cert_file = / etc / httpd / ssl / cert - exemplo . com . pem
+smtpd_tls_security_level = may
+smtp_tls_security_level = may
+smtpd_tls_loglevel = 1
+smtpd_tls_session_cache_timeout = 3600 s
+smtpd_tls_session_cache_database = btree :/ var / lib / postfix /
+smtpd_tls_cache . db
+tls_random_source = dev :/ dev / urandom
+tls_random_exchange_name = / var / lib / postfix / prng_exch
+smtpd_tls_auth_only = yes
+Figura 10.11: main.cf
+• smtpd_tls_key_file : Caminho para a chave privada;
+• smtpd_tls_cert_file : Caminho para o certificado;
+• smtpd_tls_security_level : Indica se o usuário será forçado a usar criptografia. Se
+o parâmetro for "may", o usuário que se conectar ao servidor de email pode ou não
+utilizar criptografia, e se estiver "encrypt"o usuário que se conectar ao servidor de
+email deverá usar criptografia;
+10.7 Autenticação ssl 89
+• smtp_tls_security_level : Indica se o servidor ao qual o usuário se conectar deve
+fornecer alguma forma de criptografia. Se o parâmetro for "may", o servidor pode
+ou não oferecer a criptografia, e se estiver "encrypt"o servidor deverá fornecer a
+criptografia;
+• smtpd_tls_loglevel : Indica a quantia de informações que serão armazenadas no
+arquivo log. O valor varia de 0 a 4, sendo 0 o tipo com menos infromações, e 4
+sendo o tipo com a maior quantia de informações;
+• smtpd_tls_session_cache_timeout : Indica o tempo no qual o certificado utilizado para autenticação será válido, antes de ser necessário que este seja novamente
+fornecido;
+• smtpd_tls_session_cache_database : Arquivo no qual serão armazenadas as informações de cache;
+• tls_random_source : Para a criptografia é necessário um gerador de numeros aleatorios, indicado por esta linha;
+• tls_random_exchange_name : arquivo que indica o estado do gerador de números
+aleatórios;
+• smtpd_tls_auth_only : Define se o login e senha deverão ser criptografados.
+Por fim, entre no arquivo master.cf e descomente as seguintes linha
+smtps inet n - n - - smtpd
+-o smtpd_tls_wrappermode = yes
+Figura 10.12: master.cf
+Reinicie o serviço, utilizando os seguintes comandos:
+# systemctl stop postfix
+# systemctl start postfix
+Logo após, abra o arquivo localizando em “vim /etc/dovecot/conf.d/10-ssl.conf”
+e realize as seguintes mudanças, de modo a habilitar a criptografia:
+Por fim, altere o arquivo /etc/dovecot/conf.d/10-auth.conf:
+disable_plaintext_auth = yes # Não permite senha em modo texto
+10.7 Autenticação ssl 90
+[...]
+ssl = yes
+[...]
+ssl_cert = </ etc / httpd / ssl / cert - exemplo . com . pem
+ssl_key = </ etc / httpd / ssl / priv - exemplo . com . pem
+Figura 10.13: 10-ssl.conf
+auth_mechanisms = plain login # Habilita o login somente através
+de usuário e senha
+Deve-se então reiniciar o serviço do dovecot.
+# systemctl stop dovecot
+# systemctl start dovecot
+Para verificar se as configurações foram realizadas corretamente, na máquina que está
+hospedando o servidor de email, utilize o comando abaixo:
+# openssl s_client -servername mail.exemplo.com -connect
+mail.exemplo.com:smtps
+Ao fim da mensagem exibida, deverá estar escrito o códio 220, que indica que o servidor
+é capaz de enviar e receber emails.
