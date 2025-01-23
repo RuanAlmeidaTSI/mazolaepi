@@ -1,0 +1,351 @@
+Capítulo 7
+Servidor HTTP Apache
+O serviço denominado Apache, cujo nome oficial é Apache HTTP Server, é um servidor
+web de código aberto, criado em 1995 pela Apache Software Foundation.
+Desde sua concepção até o período atual alcançou muita fama, estando atualmente
+presente na hospedagem de cerca de 46% dos sites da internet(HOSTINGER TUTORIAIS, 2022), além de ser utilizado por empresas notáveis no mercado de tecnologia, tais
+como Cisco, Adobe, VMware, Xerox, LinkedIn, Facebook / Meta, AT&T, dentre diversas
+outras(KINSTA, 2021).
+Sua principal função é atender a requisições geradas por usuários através da rede,
+armazenando, processando, e entregando a eles desde dados, a até informações e mesmo
+páginas web.
+7.1 Instalação
+Para realizar a instalação deste serviço, basta executar o comando:
+# dnf install httpd
+Em seguida, deve-se iniciá-lo, e então habilitar sua execução durante a inicialização
+do sistema. Para isso deve-se executar os seguintes comandos, na seguinte ordem:
+# systemctl start httpd
+# systemctl enable httpd
+7.2 Configurações gerais 49
+Após iniciado o serviço, torna-se possível realizar testes com o Apache dentro da rede
+local. Para isso basta digitar na barra de endereço do browser o endereço IP da máquina
+servidora e apertar a tecla ENTER. Como ainda não foram feitas configurações no serviço,
+aparecerá uma página padrão de testes do Apache.
+Figura 7.1: Página de teste do serviço HTTP
+7.2 Configurações gerais
+Primeiramente, antes mesmo da criação de qualquer página web para o servidor, devese abrir o arquivo localizado em /etc/httpd/conf/httpd.conf. Este arquivo possui configurações importantes, as quais irão afetar o web server como um todo.
+A seguir são apresentados alguns parâmetros presentes neste arquivo que podem ser
+alterados caso o gerenciador do web server deseje, porém, para o escopo deste relatório,
+os valores padrões seguirão inalterados.
+7.2 Configurações gerais 50
+• ServerRoot: Nesta linha se encontra o caminho para o arquivo contendo as configurações do servidor apache;
+ServerRoot "/etc/httpd"
+• Listen: Porta utilizada pelo servidor apache para "escutar"requisições. Por padrão,
+utiliza a porta 80. Há também uma configuração mais restritiva que utiliza um
+endereço de IP juntamente à porta, como exemplificado no próprio arquivo;
+Listen 80
+Listen 12.34.56.78:80
+• User: Usuário que estã sendo utilizado pelo servidor apache para realizar suas funções;
+User apache
+• Group: Grupo ao qual o servidor apache pertence;
+Group apache
+• DocumentRoot: Nesta linha se encontra o caminho para o diretório que contém as
+páginas que serão hospedadas pelo serviço;
+DocumentRoot "/var/www/html"
+• ScriptAlias: Esta linha indica o caminho para o diretório no qual serão hospedadas
+arquivos de script dasweb pages;
+ScriptAlias /cgi-bin/ "/var/www/cgi-bin/"
+7.2 Configurações gerais 51
+• ErrorDocument: Por fim, esta(s) linha(s) permite(m) que o gerenciador forneça
+mensagens e/ou páginas personalizadas para as situações em que um erro ocorra ao
+exibir certa página.
+ErrorDocument 500 " O ␣ servidor ␣ parou ␣ de ␣ funcionar . "
+ErrorDocument 404 / missing . html
+ErrorDocument 404 " / cgi - bin / missing_handler . pl "
+ErrorDocument 402 http :// www . example . com / subscriptioninfo . html
+Figura 7.2: Exemplos de mensagens e páginas de erros personalizadas
+Caso qualquer alteração tenha sido feita, é importante lembrar-se de reinicializar o
+serviço, para que as mudanças tenham efeito, o que pode ser feito aplicando os seguintes
+comandos na sequência demonstrada:
+systemctl stop httpd
+systemctl start httpd
+7.2.1 Configurando a página inicial
+É importante criar uma página inicial personalizada, mesmo que contenha apenas
+texto, pois a página teste exibida pelo apache pode apresentar um risco à segurança do
+servidor.
+Para isso, deve-se primeiramente criar um arquivo denominado index.html dentro do
+diretório /var/www/html.
+Tendo sido criado o arquivo índice, e tendo o mesmo sido preenchido, mesmo que com
+apenas texto, deve-se agora abrir o arquivo localizado em /etc/httpd/conf.d/welcome.conf
+e comentar todas as linhas do arquivo.
+Deve-se notar que, caso seja feita a alteração citada acima no arquivo welcome.conf, é
+possível também criar uma página inicial sem o uso de um arquivo index.html, necessitando
+apenas da criação de um diretório dentro do diretório /var/www/html.
+É importante lembrar que qualquer alteração em qualquer arquivo "conf"presente no
+diretório httpd requer a reinicialização do serviço.
+7.2 Configurações gerais 52
+Figura 7.3: Página inicial do servidor baseada na estrutura de diretórios 1
+Figura 7.4: Página inicial do servidor baseada na estrutura de diretórios 2
+7.2 Configurações gerais 53
+7.2.2 Configurando VirtualHosts
+Virtual Host é uma técnica utilizada pelo servidor Apache para permitir que um unico
+servidor seja capaz de hospedar multiplos sites e aplicações web. Usando Virtual Hosts
+torna-se possível especificar uma configuração dedicada para cada site.
+Apesar de ser possível configurar Virtual Hosts dentro do arquivo de configurações
+gerails (/etc/httpd/conf.d/httpd.conf ), é considerado boa prática modularizar o processo,
+ou seja, criar um arquivo para cada Virtual Host dentro do diretório /etc/httpd/conf.d.
+Para iniciar o processo de criação de um virtual host, crie um arquivo com a extensão
+".conf"como demonstrado a seguir:
+# vim truco.com.br.conf
+Dentro do arquivo, inicia-se o processo utilizando a diretiva VirtualHost, da seguinte
+forma:
+< VirtualHost *:80 >
+</ VirtualHost >
+Figura 7.5: Modo de uso da diretiva VirtualHost.
+Dessa forma, está sendo criado um virtual host que irá "escutar"requisições na porta
+80. O asterisco indica que este virtual host pode receber requisições de qualquer endereço
+IP.
+Em seguida, deve-se adicionar ao Virtual Host as configurações mínimas necessárias
+para o funcionamento correto, sendo elas ServerName, que indica por qual nome esta
+página ou aplicação irá atender, e DocumentRoot, que indica o caminho até a pasta
+contendo os conteúdos desta página ou aplicação.
+< VirtualHost *:80 >
+ServerName www . truco . com . br
+DocumentRoot " / var / www / html / truco . com . br / "
+</ VirtualHost >
+Figura 7.6: VirtualHost contendo as configurações mínimas necessárias.
+7.2 Configurações gerais 54
+Caso o diretório especificado em DocumentRoot não existir, ele deve ser criado.
+Para este exemplo, utilizando o domínio truco.com.br criado na seção DNS, o comando
+seria:
+# mkdir /var/www/html/truco.com.br
+O diretório /var/www/html é o local ao qual é adicionado o conteúdo dos sites que
+serão hospedados (HTML, PHP, etc.).
+Ainda há várias outras opções que podem ser adicionadas à diretiva VirtualHost, caso
+seja desejavel para o gerenciador do servidor, tais como:
+< VirtualHost *:80 >
+ServerName www . truco . com . br
+ServerAdmin " truco@gmail . com "
+ServerAlias truco . com . br
+DocumentRoot " / var / www / html / truco . com . br / "
+ErrorDocument 404 " <h1 > ␣ Pagina ␣ nao ␣ encontrada ␣ </ h1 > "
+Customlog " logs / access - truco . com . br_log " combined
+Errorlog " logs / error - truco . com . br_log " combined
+</ VirtualHost >
+Figura 7.7: Configurações extras
+• Server Admin consiste em uma forma de identificação quanto ao gerenciador do
+servidor;
+• Server Alias é um nome alternativo para o servidor, neste caso, permitindo que o
+site truco.com.br seja acessado sem a necessidade de digitar www;
+• ErrorDocument permite que o gerenciador especifique o que deve ser exibido perante
+a um determinado erro. Neste caso, uma mensagem é exibida em caso de um erro
+404.
+• CustomLog e ErrorLog geram arquivos personalizados de, respectivamente, acessos
+e erros.
+7.2 Configurações gerais 55
+Caso o servidor possua diversas páginas, é interessante criar também um arquivo
+denominado 000-default.conf, para agir como a página default do servidor, devendo possuir
+as seguintes configurações:
+< VirtualHost *:80 >
+ServerName " www . meuprovedor . com . br "
+DocumentRoot " / var / www / html "
+</ VirtualHost >
+Figura 7.8: Arquivo 000-default.conf.
+Finalizadas as configurações de VirtualHost, é interessante para o gerenciador do servidor especificar alguns parâmetros de segurança ao diretório raiz de cada sire, para proteger
+a integridade dos dados de seu servidor HTTP. Para isso, utiliza-se a diretiva Directory,
+da seguinte forma:
+< VirtualHost *:80 >
+ServerName www . truco . com . br
+ServerAdmin " truco@gmail . com "
+ServerAlias truco . com . br
+DocumentRoot " / var / www / html / truco . com . br / "
+ErrorDocument 404 " <h1 > Pagina ␣ nao ␣ encontrada </ h1 > "
+Customlog " logs / access - truco . com . br_log " combined
+Errorlog " logs / error - truco . com . br_log " combined
+< Directory " / var / www . html / truco . com . br / " >
+Options - Indexes
+AllowOverride all
+Require all granted
+</ Directory >
+</ VirtualHost >
+Figura 7.9: Diretiva directory básica.
+• Directory é a diretiva onde são especificadas as permissões e configurações referentes
+a um determinado diretório.
+7.3 Habilitando suporte ao PHP 56
+• Options é o campo no qual se especifica como nosso diretório irá listar os arquivos
+que o mesmo contem. Podem ser utilizadas as opções: +Indexes (Exibe o conteúdo)
+ou -Indexes (Não exibe o conteúdo)
+• AllowOverride permite o uso do arquivo .htaccess. Caso seu valor seja all, o uso
+está sendo permitido.Utiliza-se o valor none para negar o uso.
+• Require fornece permissões de acesso a um diretório. Caso seu parâmetro seja all
+granted, todos os IPs podem acessar o diretório. Caso seja all denied, o acesso àquele
+diretório será negado a todos os IPs.
+Por fim, para tornar possível o acesso por máquinas de redes externas é imperativo que
+se crie uma zona no arquivo de configuraçã
+
+zone " truco . com . br " IN {
+type master ;
+file " / var / named / data / truco . com . br . conf " ;
+allow - update { none ; };
+};
+Figura 7.10: Configuração básica de uma zona DNS.
+7.3 Habilitando suporte ao PHP
+Muitas aplicações atuais utilizam a linguágen PHP para desenvolvimento. Essa linguagem necessita de um servidor web para realizar suas funções, e, para ativar esse suporte
+ao servidor Apache, deve-se realizar o download do pacote PHP, utilizando o seguinte
+comando:
+# dnf install php
+Os módulos necessários para o funcionamento do PHP serão automaticamente adicionados aos diretórios de configuração do servidor Apache. Ainda é necessário, porém,
+reinicializar o serviço Apache para que seu uso seja plenamente disponibilizado, podendo
+ser feito com os seguintes comandos:
+# systemctl stop httpd
+# systemctl start httpd
+7.4 Habilitando HTTPS 57
+Para testar se o módulo PHP foi corretamente instalado basta simplesmente criar um
+arquivo .php no diretório de uma das páginas/aplicações hospedadas, como exemplo, em
+/var/www/html/truco.com.br.
+# vim /var/www/html/truco.com.br/info.php
+E adicionar o seguinte código dentro do arquivo:
+<? php
+phpinfo ();
+? >
+Figura 7.11: Código PHP para mostrar informações sobre o PHP.
+Por fim, basta simplesmente digitar na barra de pesquisa do navegador o caminho
+truco.com.br/info.php, e ao teclar ENTER, deverá ser exibida uma página com a logomarca da linguagem PhP, bem como informações como versão, servidor, módulos utilizados, etc.
+7.4 Habilitando HTTPS
+Para habilitar o HTTPS Hyper Text Transfer Protocol Secure necessita-se utilizar TLS
+(Transport Layer Security) para permitir que as comunicações sejam criptografadas, não
+permitindo o envio de informações em texto puro através da rede.
+Para isso vamos, necessita-se criar um certificado SSL autoassinado que será utilizado
+pelo servidor Apache para realizar suas comunicações. Um certificado autoassinado não
+irá validar a identidade do servidor nos órgãos de validação de certificados, porém, ao
+menos permitirá a realização de comunicações criptografadas.
+Antes de criar o certificado, deve-se instalar o pacote mod_ssl para poder habilitar o
+https nos sites.
+# dnf install mod_ssl
+7.4.1 Criando um certificado
+Primeiramente, deve-se verificar o conteúdo do arquivo openssl.conf. No Rocky Linux 9,
+por ser uma distibuição baseada nas distribuíções RedHat, o arquivo está localizado em:
+/etc/pki/tls/openssl.conf
+7.4 Habilitando HTTPS 58
+...
+HOME = $ENV :: HOME
+...
+[ CA_default ]
+dir = $HOME / CA
+Figura 7.12: Exemplo de como deve estar o arquivo openssl.conf
+Dentro deste arquivo, deve-se procurar as seguintes linhas, e, caso sejam diferentes
+das linhas listadas abaixo, elas devem ser modificadas para se igualar às linhas mostradas
+abaixo:
+Em seguida, deve-se criar um cartório digital. Isso pode ser feito utilizando-se os
+seguintes comandos, na seguinte sequência:
+# mkdir -p / CA / private
+# mkdir -p / CA / newcerts
+# touch / CA / index . txt
+# echo 01 > / CA / serial
+# cd / CA
+Figura 7.13: Comandos para a criação de um Cartório Digital
+Deve-se então criar a chave privada e o certificado da CA, utilizando o seguinte comando:
+# openssl req -nodes -new -x509 -keyout ./private/cakey.pem -out
+cacert.pem -days 365
+Deve-se então criar a chave pública a partir da chave privada criada anteriormente,
+utilizando o seguinte comando:
+# openssl rsa -in ./private/cakey.pem -pubout -out cakeypub.pem
+Crie um certificado auto-assinado com o seguinte comando:
+# openssl req -x509 -nodes -new -addext “subjectAltName =
+DNS:truco.com.br” -keyout priv-chavetruco.pem -out cert-truco.pem
+-days 365
+7.4 Habilitando HTTPS 59
+Feito isso, crie uma requisição com o seguinte comando:
+# openssl req -nodes -new -addext “subjectAltName =
+DNS:www.truco.com.br, DNS:truco.com.br, DNS:ftp.truco.com.br,
+DNS:mail.truco.com.br” -keyout priv-chavetruco.pem -out
+req-truco.csr -days 365
+Para assinar a própria requisição:
+# openssl ca -out cert-truco.pem -in req-truco.csr -days 365
+OBS: Os nomes do país, estado, cidade e organização deste certificado deverão ser os
+mesmos da organização do certificado da CA.
+Caso seja necessário assinar a requisição/certificado de terceiros, utilize o seguinte
+comando:
+# openssl x509 -req -in req-truco.csr -copy_extensions=copy -CA
+./cacert.pem -CAkey ./private/cakey.pem -CAserial ./serial -out
+cert-truco.pem -days 365
+7.4.2 Utilizando SSL com servidor Apache
+Após a criação dos certificados anteriormente, copie o certificado, o certificado do cartório
+e a chave privada do site, para a pasta /etc/httpd/ssl (caso ela não exista, crie ela).
+# cp cert-truco.pem priv-chavetruco.pem cacert.pem /etc/httpd/ssl
+Tendo criado o certificado e copiado para a pasta ssl, deve-se agora alterar o arquivo
+de configuração do domínio que deseja habilitar https:
+/etc/httpd/conf.d/truco.com.br.conf
+
+Deve-se criar um novo VirtualHost que escuta na porta 443 com as seguintes configurações:
+< VirtualHost *:443 >
+ServerAdmin truco@truco . com . br
+ServerName www . truco . com . br
+ServerAlias truco . com . br
+DocumentRoot " / var / www / html / truco . com . br / "
+< Directory " / var / www / html / truco . com . br / " >
+AllowOverride all
+Require all granted
+</ Directory >
+SSLCertificateFile / etc / httpd / ssl / cert - truco . pem
+SSLCertificateKeyFile / etc / httpd / ssl / priv - chavetruco . pem
+SSLCACertificateFile / etc / httpd / ssl / cacert . pem
+</ VirtualHost >
+Figura 7.14: Exemplo de configurações a serem adicionadas no arquivo truco.com.br.conf
+As configurações adicionais significam:
+• SSLCertificateFile: O caminho onde está localizado o certificado do domínio.
+• SSLCertificateKeyFile: O caminho onde está localizado a chave privada do domínio.
+• SSLCACertificateFile: O caminho onde está localizado a chave privada do cartório
+que assinou o certificado do domínio.
+Caso o certificado possua nomes de host adicionais no campo Subject Alt Names, será
+necessário adicionar o parâmetro ServerAliases, o qual deverá conter os nomes em Subject
+Alt Names.
+Após essa configuração, deve-se reiniciar o servidor Apache:
+systemctl stop httpd
+systemctl start httpd
+
+7.4.3 Redirecionando de HTTP para HTTPS
+Para forçar o uso de HTTPS nas páginas do servidor, é necessário fazer que o uso de SSL
+seja requerido nos hosts virtuais que escutam na porta 80 (HTTP). Para isso deve-se usar
+a configuração demonstrada na figura abaixo.
+< VirtualHost *:80 >
+ServerAdmin truco@truco . com . br
+ServerName www . truco . com . br
+ServerAlias truco . com . br
+DocumentRoot " / var / www / html / truco . com . br / "
+< Directory " / var / www / html / truco . com . br / " >
+AllowOverride all
+Require all granted
+</ Directory >
+Redirect / https :// truco . com . br /
+</ VirtualHost >
+< VirtualHost *:443 >
+ServerAdmin truco@truco . com . br
+ServerName www . truco . com . br
+ServerAlias truco . com . br
+DocumentRoot " / var / www / html / truco . com . br / "
+< Directory " / var / www / html / truco . com . br / " >
+AllowOverride all
+Require all granted
+</ Directory >
+SSLCertificateFile / etc / httpd / ssl / cert - truco . pem
+SSLCertificateKeyFile / etc / httpd / ssl / priv - chavetruco . pem
+SSLCACertificateFile / etc / httpd / ssl / cacert . pem
+</ VirtualHost >
+Figura 7.15: VirtualHost com Redirect.
+Por fim, reinicie o serviço:
+systemctl stop httpd
+systemctl start httpd
+7.5 Arquivo .htaccess 62
+7.5 Arquivo .htaccess
+Um arquivo .htaccess permite alterar as configurações de um site sem necessariamente
+alterar seu arquivo de configuração principal. Esse arquivo geralmente fica oculto no
+diretório raiz do site.
+Utilizando de exemplo o site dos tópicos anteriores, truco.com.br, o arquivo .htaccess
+ficaria localizado em:
+/var/www/html/truco.com.br/.htaccess
+Para permitir o uso do .htaccess primeiramente deve-se inserir o parâmetro AllowOverride all no VirtualHost do site desejado, como demonstrado anteriormente.
+7.5.1 Autenticando usuários com .htaccess
+Pode-se fazer com que o acesso ao site hospedado seja realizado apenas por usuários
+autorizados. Para isso, utiliza-se o arquivo .htaccess, adicionando a ele as seguintes regras:
+AuthName " Acesso ␣ Restrito "
+AuthType Basic
+AuthUserFile / var / www / html / bancada2 /. permitidos . txt
+Require valid - user
+Figura 7.16: Autenticação com .htaccess.
+Essas configurações habilitam uma autenticação básica onde os usuários autorizados
+estão armazenados em /var/www/html/truco.com.br/.permitidos.txt.
+Para criar o arquivo oculto .permitidos.txt basta utilizar o comando:
+# touch /var/www/html/truco.com.br/.permitidos.txt
+Por fim, para criar os usuários autorizados, basta utilizar o seguinte comando:
+# htpasswd /var/www/html/truco.com.br/.permitidos.txt Nome_Usuário
