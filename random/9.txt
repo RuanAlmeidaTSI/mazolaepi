@@ -1,0 +1,131 @@
+Capítulo 8
+Nginx
+O Nginx é um servidor de HTTP/HTTPS, proxy reverso, proxy de email IMAP/POP3.
+Ele é um servidor mais leve do que o Apache devido a forma na qual lida com requisições
+web e também pode trabalhar junto com o Apache.
+8.1 Instalação
+Para instalar o Nginx, digite o seguinte comando:
+# dnf install nginx
+Para habilitar a inicialização do serviço juntamente com o sistema, digite o comando:
+# systemctl enable nginx
+8.2 Hospedando site HTTP
+O arquivo de configuração padrão do nginx com as configurações dos servidores fica localizado em /etc/nginx/nginx.conf. Abra o arquivo e adicione as seguintes configurações:
+server {
+listen 80;
+server_name www . truco . com . br truco . com . br ;
+root / var / www / html / truco . com . br /;
+access_log / var / log / nginx / truco . com . br / access . log ;
+error_log / var / log / nginx / truco . com . br / error . log ;
+}
+Figura 8.1: Configuração padrão de uma aplicação.
+8.2 Hospedando site HTTP 64
+• listen 80: A porta na qual a aplicação vai estar hospedada.
+• server_name truco.com.br: Qual o endereço da aplicação, pode ser um domínio ou
+endereço IP.
+• root /var/www/html/truco.com.br: Endereço raiz da aplicação web contendo todos
+os arquivos da aplicação.
+• access_log /var/log/nginx/truco.com.br/access.log: Onde ficará salvo o arquivo de
+log referente aos acessos feitos a aplicação.
+• error_log /var/log/nginx/truco.com.br/error.log: Onde ficará salvo o arquivo de
+log referente aos erros da aplicação.
+Após realizar essas configurações, crie o diretório truco.com.br no /var/log/nginx e
+no /var/www/html
+# mkdir /var/log/nginx/truco.com.br
+# mkdir /var/www/html/truco.com.br
+Navegue até o diretório /var/www/html/truco.com.br
+# cd /var/www/html/truco.com.br
+Crie um arquivo index.html simples apenas para testar o acesso a aplicação.
+< html >
+< head >
+< title > TRUCO </ title >
+</ head >
+< body >
+<h1 > ZAP </ h1 >
+<h2 > 7 COPAS </ h2 >
+<h3 > ESPADILHA </ h3 >
+<h4 > 7 OURO </ h4 >
+</ body >
+</ html >
+Figura 8.2: Arquivo html simples
+Feito isso, inicie o nginx
+# systemctl start nginx
+8.3 Hospedando site HTTPS 65
+E em uma máquina cliente configurada com DNS do servidor, digite no navegador:
+truco.com.br ou www.truco.com.br e deve-se exibir o arquivo index.html criado.
+Figura 8.3: Site rodando normalmente na porta 80.
+8.3 Hospedando site HTTPS
+Para se criar um site com HTTPS, é necessário ter criado anteriormente o Cartório Digital
+e gerar todas as chaves e certificados para poder assinar o certificado do site.
+Após gerar o Cartório Digital e assinar o certificado do site, adicione as seguintes
+configurações no arquivo /etc/nginx/nginx.conf:
+server {
+listen 443 ssl ;
+server_name www . truco . com . br truco . com . br ;
+root / var / www / html / truco . com . br ;
+access_log / var / log / nginx / https . truco . com . br / acces . log ;
+error_log / var / log / nginx / https . truco . com . br / error . log ;
+ssl_certificate / etc / httpd / ssl / cert - truco . com . br . pem ;
+ssl_certificate_key / etc / httpd / ssl / priv - truco . com . br . pem ;
+}
+Figura 8.4: Configuração do site HTTPS.
+As únicas configurações diferentes do site em HTTP são a porta, que o HTTPS trabalha na 443, e as duas últimas linhas ssl_certificate que contêm o caminho do certificado
+8.4 Redirecionamento automático para HTTPS 66
+assinado e ssl_certificate_key que contêm o caminho da chave que assinou o certificado
+(chave previamente assinada pelo cartório
+
+8.4 Redirecionamento automático para HTTPS
+O nginx por padrão não redireciona o site HTTP para HTTPS, porém para adicionar esse
+redirecionamento de forma automática, basta adicionar a seguinte linha na configuração
+do site HTTP:
+server {
+listen 80;
+server_name www . truco . com . br truco . com . br ;
+root / var / www / html / truco . com . br /;
+access_log / var / log / nginx / truco . com . br / access . log ;
+error_log / var / log / nginx / truco . com . br / error . log ;
+return 301 https :// $host$request_uri ;
+...
+Figura 8.5: Adicionando redirecionamento HTTPS.
+Ao adicionar o return 301, o nginx vai retornar o HTTP STATUS CODE 301, que
+significa a página mudou de endereço, e vai redirecionar o usuário automaticamente para
+a página HTTPS.
+8.5 Balanceamento de carga
+O balanceamento de cargo feito pelo NGINX permite que uma mesma aplicação esteja
+hospedada em várias maquinas diferentes, e o próprio NGINX escolherá de acordo com
+um critério, para qual das máquinas ele vai direcionar o usuário. Os critérios utilizados
+pelo NGINX são;
+• least_conn: Máquina com o menor número de conexões.
+• least_time: Máquina com menor tempo médio de resposta.
+• random: Uma máquina aleatório.
+Para exemplificar o balanceamento de carga do NGINX, crie duas máquinas virtuais
+dentro de uma mesma rede que pertençam ao servidor NGINX rodando na placa externa,
+hospedando apenas um arquivo teste do PHP rodando na porta 10000.
+8.6 Redirecionamento para outras aplicações 67
+Em seguida, adicione as seguintes alterações no arquivo /etc/nginx/nginx.conf:
+upstream backend {
+least - conn ;
+server $IPVM1 ;
+server $IPVM2 ;
+}
+// Dentro do arquivo de configuracao do dominio truco . com . br
+// adicione a seguinte linha :
+location / {
+proxy_pass http :// backend ;
+}
+Figura 8.6: Balanceamento de carga.
+Agora o NGINX conseguirá realizar o balanceamento de carga, direcionando o usuário
+para a máquina que tiver menos conexões estabelecidas.
+8.6 Redirecionamento para outras aplicações
+Em um mesmo domínio, pode-se hospedar diferentes aplicações e acessa-lás no navegador
+digitando o domínio + nome da aplicação definida no nginx. Para realizar essa configuração, basta adicionar as seguintes linhas no arquivo de configuração do domínio:
+...
+location / captive / {
+proxy_pass http ://192.168.1.128:20000/;
+}
+location / trafegorede / {
+proxy_pass http ://192.168.1.128:80/;
+}
+}
+Figura 8.7: Redirecionando para outras aplicações dentro do domínio.
+8.6 Redirecionamento para outras aplicações 68
+Agora, ao digitar o endereço truco.com.br/trafegorede/, será redireciona
