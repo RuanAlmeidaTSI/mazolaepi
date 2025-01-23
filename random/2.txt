@@ -1,0 +1,275 @@
+1. ls  
+   - Example: `ls /home`  
+     Lists the contents of the /home directory.  
+
+2. cd  
+   - Example: `cd /var/log`  
+     Changes the current working directory to /var/log.  
+
+3. pwd  
+   - Example: `pwd`  
+     Displays the current working directory.  
+
+4. mkdir  
+   - Example: `mkdir new_folder`  
+     Creates a directory named "new_folder".  
+
+5. rmdir  
+   - Example: `rmdir empty_folder`  
+     Removes an empty directory named "empty_folder".  
+
+6. rm  
+   - Example: `rm file.txt`  
+     Deletes the file named "file.txt".  
+
+7. touch  
+   - Example: `touch newfile.txt`  
+     Creates an empty file named "newfile.txt".  
+
+8. cp  
+   - Example: `cp source.txt destination.txt`  
+     Copies "source.txt" to "destination.txt".  
+
+9. mv  
+   - Example: `mv oldname.txt newname.txt`  
+     Renames or moves "oldname.txt" to "newname.txt".  
+
+10. cat  
+    - Example: `cat file.txt`  
+      Displays the contents of "file.txt".  
+
+11. nano  
+    - Example: `nano file.txt`  
+      Opens "file.txt" in the nano text editor.  
+
+12. vi  
+    - Example: `vi file.txt`  
+      Opens "file.txt" in the vi editor.  
+
+13. grep  
+    - Example: `grep 'error' logfile.log`  
+      Searches for the word "error" in the file "logfile.log".  
+
+14. find  
+    - Example: `find /home -name "*.txt"`  
+      Searches for all .txt files in the /home directory.  
+
+15. chmod  
+    - Example: `chmod 755 script.sh`  
+      Sets permissions for "script.sh" to be executable.  
+
+16. chown  
+    - Example: `chown user:user file.txt`  
+      Changes the owner of "file.txt" to "user".  
+
+17. useradd  
+    - Example: `sudo useradd newuser`  
+      Adds a new user named "newuser".  
+
+18. passwd  
+    - Example: `passwd newuser`  
+      Sets or changes the password for "newuser".  
+
+19. whoami  
+    - Example: `whoami`  
+      Displays the username of the current user.  
+
+20. id  
+    - Example: `id user`  
+      Displays the user ID and group ID for "user".  
+
+21. sudo  
+    - Example: `sudo apt-get update`  
+      Runs the command with root privileges.  
+
+22. apt-get  
+    - Example: `sudo apt-get install vim`  
+      Installs the "vim" package on Debian/Ubuntu-based systems.  
+
+23. yum  
+    - Example: `sudo yum install httpd`  
+      Installs the "httpd" package on RHEL/CentOS-based systems.  
+
+24. systemctl  
+    - Example: `sudo systemctl restart apache2`  
+      Restarts the Apache2 service.  
+
+25. ps  
+    - Example: `ps aux`  
+      Lists all running processes.  
+
+26. top  
+    - Example: `top`  
+      Displays real-time system resource usage and running processes.  
+
+27. kill  
+    - Example: `kill 1234`  
+      Terminates the process with PID 1234.  
+
+28. df  
+    - Example: `df /`  
+      Displays disk space usage for the root file system.  
+
+29. du  
+    - Example: `du -sh /var/log`  
+      Displays the size of the /var/log directory.  
+
+30. tar  
+    - Example: `tar -czvf archive.tar.gz folder`  
+      Compresses "folder" into a tar.gz archive.  
+
+31. zip  
+    - Example: `zip archive.zip file1 file2`  
+      Creates a ZIP archive containing "file1" and "file2".  
+
+32. unzip  
+    - Example: `unzip archive.zip`  
+      Extracts files from the ZIP archive.  
+
+33. wget  
+    - Example: `wget http://example.com/file.txt`  
+      Downloads "file.txt" from the specified URL.  
+
+34. curl  
+    - Example: `curl -O http://example.com/file.txt`  
+      Downloads "file.txt" using curl.  
+
+35. ping  
+    - Example: `ping google.com`  
+      Tests connectivity to google.com.  
+
+36. ssh  
+    - Example: `ssh user@192.168.1.1`  
+      Connects to a remote server at 192.168.1.1 as "user".  
+
+37. scp  
+    - Example: `scp file.txt user@192.168.1.1:/home/user`  
+      Copies "file.txt" to the remote server.  
+
+38. rsync  
+    - Example: `rsync -avz source/ destination/`  
+      Synchronizes files between "source" and "destination".  
+
+39. history  
+    - Example: `history`  
+      Displays the command history.  
+
+40. clear  
+    - Example: `clear`  
+      Clears the terminal screen.  
+
+41. reboot  
+    - Example: `sudo reboot`  
+      Restarts the system.  
+
+42. shutdown  
+    - Example: `sudo shutdown -h now`  
+      Powers off the system immediately.  
+
+43. uname  
+    - Example: `uname -a`  
+      Displays detailed system information.  
+
+44. hostname  
+    - Example: `hostname`  
+      Displays the system hostname.  
+
+45. free  
+    - Example: `free -h`  
+      Displays memory usage in a human-readable format.  
+
+46. echo  
+    - Example: `echo "Hello, World!"`  
+      Prints "Hello, World!" to the terminal.  
+
+47. man  
+    - Example: `man ls`  
+      Displays the manual for the "ls" command.  
+
+48. alias  
+    - Example: `alias ll='ls -la'`  
+      Creates a shortcut "ll" for "ls -la".  
+
+49. df -h  
+    - Example: `df -h`  
+      Displays disk space usage in a human-readable format.  
+
+50. mount  
+    - Example: `mount /dev/sdb1 /mnt`  
+      Mounts the device /dev/sdb1 to the /mnt directory.  
+
+51. umount  
+    - Example: `umount /mnt`  
+      Unmounts the /mnt directory.  
+
+52. ifconfig  
+    - Example: `ifconfig`  
+      Displays network interface information (deprecated, use `ip`).  
+
+53. ip  
+    - Example: `ip addr show`  
+      Displays detailed network interface information.  
+
+54. netstat  
+    - Example: `netstat -tuln`  
+      Displays active listening ports and network connections.  
+
+55. uptime  
+    - Example: `uptime`  
+      Displays system uptime and load averages.  
+
+56. tail  
+    - Example: `tail -n 10 logfile.log`  
+      Displays the last 10 lines of "logfile.log".  
+
+57. head  
+    - Example: `head -n 10 file.txt`  
+      Displays the first 10 lines of "file.txt".  
+
+58. stat  
+    - Example: `stat file.txt`  
+      Displays detailed information about "file.txt".  
+
+59. ln  
+    - Example: `ln -s /path/to/target symlink`  
+      Creates a symbolic link to "target".  
+
+60. env  
+    - Example: `env`  
+      Displays environment variables.  
+
+61. export  
+    - Example: `export PATH=$PATH:/new/path`  
+      Adds "/new/path" to the system PATH variable.  
+
+62. crontab  
+    - Example: `crontab -e`  
+      Edits cron jobs for the current user.  
+
+63. logrotate  
+    - Example: `logrotate /etc/logrotate.conf`  
+      Runs log rotation based on the specified configuration.  
+
+64. dmesg  
+    - Example: `dmesg | grep error`  
+      Displays kernel messages containing "error".  
+
+65. journalctl  
+    - Example: `journalctl -u apache2`  
+      Displays logs for the Apache2 service.  
+
+66. awk  
+    - Example: `awk '{print $1}' file.txt`  
+      Prints the first column of "file.txt".  
+
+67. sed  
+    - Example: `sed 's/old/new/g' file.txt`  
+      Replaces "old" with "new" in "file.txt".  
+
+68. diff  
+    - Example: `diff file1.txt file2.txt`  
+      Compares "file1.txt" and "file2.txt".  
+
+69. uniq  
+    - Example: `sort file.txt | uniq`  
+      Filters out duplicate lines in "file.txt".  
