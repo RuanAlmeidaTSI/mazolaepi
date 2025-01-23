@@ -1,0 +1,22 @@
+Clique em continue no final da página e um arquivo de configuração será gerado com
+o nome config.inc.php no diretório /etc/roundcubemail.
+Altere a seguinte linha dentro do arquivo:
+$config[db_dsnw] = "sqlite=////var/roundcubemail
+/roundcube.sqlite?mode=0646";
+E adicione a seguinte linha:
+$config["mail_domain"] = "exemplo.com"
+Altere o dono e o grupo do diretorio /var/roundcubemail para apache.
+# chown apache:apache /var/roundcubemail
+10.8 Configurando Web Mail 98
+Para fazer com que o roundcube não verifique o certificado fornecido, deve-se adicionar
+as seguintes linhas no arquivo config.inc.php:
+$config [ ’ imap_conn_options ’] = array (
+’ssl ’ = > array ( ’ verify_peer ’ = > false , ’ verify_peer_name ’ = > false ) ,
+’tls ’ = > array ( ’ verify_peer ’ = > false , ’ verify_peer_name ’ = > false ));
+$config [ ’ smtp_conn_options ’] = array (
+’ssl ’ = > array ( ’ verify_peer ’ = > false , ’ verify_peer_name ’ = > false ) ,
+’tls ’ = > array ( ’ verify_peer ’ = > false , ’ verify_peer_name ’ = > false ));
+Figura 10.21: Linhas de configuração adicionadas ao arquivo config.inc.php
+Por fim, salve as alterações e feche o arquivo. Caso as alterações tenham sido feitas
+de maneira correta, ao retornar para o endereço $IPMAQUINAVIRTUAL/roundcubemail/installer o banco de dados estará com status OK, e poderá ser feito o teste do
+servidor de email como demonstrado na figura abaixo.
