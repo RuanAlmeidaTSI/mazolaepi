@@ -1,0 +1,205 @@
+# Disable the Existing Firewall
+sudo systemctl stop firewalld
+sudo systemctl disable firewalld
+sudo systemctl status firewalld
+
+# Install iptables Tools
+sudo dnf install iptables-services -y
+
+# Create Custom Firewall Script
+sudo nano /usr/local/bin/custom-firewall.sh
+
+# Add the Following Rules to the Script
+#!/bin/bash
+# Flush existing rules
+iptables -F
+
+# Default policies
+iptables -P INPUT DROP
+iptables -P FORWARD DROP
+iptables -P OUTPUT ACCEPT
+
+# Allow loopback traffic
+iptables -A INPUT -i lo -j ACCEPT
+
+# Allow incoming SSH (port 22)
+iptables -A INPUT -p tcp --dport 22 -j ACCEPT
+
+# Allow established and related traffic
+iptables -A INPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+
+# Log dropped packets (optional)
+iptables -A INPUT -j LOG --log-prefix "IPTables-Dropped: " --log-level 4
+
+# Save and Exit the File
+
+# Make the Script Executable
+sudo chmod +x /usr/local/bin/custom-firewall.sh
+
+# Test the Script
+sudo /usr/local/bin/custom-firewall.sh
+
+# Save the Rules
+sudo iptables-save > /etc/sysconfig/iptables
+
+# Create a Systemd Service for the Firewall Script
+sudo nano /etc/systemd/system/custom-firewall.service
+
+# Add the Following Content to the Service File
+[Unit]
+Description=Custom Firewall Rules
+After=network.target
+
+[Service]
+ExecStart=/usr/local/bin/custom-firewall.sh
+Type=oneshot
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
+
+# Save and Exit the File
+
+# Enable the Service
+sudo systemctl enable custom-firewall.service
+
+# Start the Service Immediately
+sudo systemctl start custom-firewall.service
+
+# Verify the Service Status
+sudo systemctl status custom-firewall.service
+
+# Verify the iptables Rules
+sudo iptables -L -v
+
+# Install Required Mail Server Packages
+sudo dnf install postfix dovecot -y
+
+# Configure Postfix
+sudo nano /etc/postfix/main.cf
+
+# Add/Edit the Following in the File
+myhostname = your-domain.com
+mydomain = your-domain.com
+myorigin = $mydomain
+inet_interfaces = all
+inet_protocols = ipv4
+mydestination = $myhostname, localhost.$mydomain, localhost, $mydomain
+relayhost = 
+mynetworks = 127.0.0.0/8 [::1]/128
+mailbox_size_limit = 0
+recipient_delimiter = +
+smtpd_banner = $myhostname ESMTP $mail_name (Rocky Linux)
+
+# Save and Exit the File
+
+# Start and Enable Postfix
+sudo systemctl enable postfix
+sudo systemctl start postfix
+
+# Verify Postfix Status
+sudo systemctl status postfix
+
+# Configure Dovecot
+sudo nano /etc/dovecot/dovecot.conf
+
+# Ensure the Following Lines Exist and are Un-commented
+protocols = imap pop3 lmtp
+mail_location = maildir:~/Maildir
+
+# Edit Authentication Settings
+sudo nano /etc/dovecot/conf.d/10-auth.conf
+# Ensure This Line is Un-commented
+auth_mechanisms = plain login
+
+# Edit Mail Directory Permissions
+sudo nano /etc/dovecot/conf.d/10-mail.conf
+# Ensure This Line is Un-commented
+mail_privileged_group = mail
+
+# Start and Enable Dovecot
+sudo systemctl enable dovecot
+sudo systemctl start dovecot
+
+# Verify Dovecot Status
+sudo systemctl status dovecot
+
+# Open Ports in Firewall (if Using Firewalld)
+sudo firewall-cmd --permanent --add-service=smtp
+sudo firewall-cmd --permanent --add-service=imap
+sudo firewall-cmd --permanent --add-service=pop3
+sudo firewall-cmd --reload
+
+# Create a Test Mailbox and Send a Test Email
+sudo useradd testuser
+sudo passwd testuser
+sudo mkdir -p /home/testuser/Maildir
+sudo chown -R testuser:mail /home/testuser/Maildir
+
+echo "Test email content" | mail -s "Test Subject" testuser
+
+# Verify Mail Delivery
+sudo tail -f /var/log/maillog
+
+# Install Apache
+sudo dnf install httpd -y
+
+# Configure Apache
+sudo nano /etc/httpd/conf/httpd.conf
+
+# Adjust the Following Lines (as Needed)
+ServerName your-domain.com
+DocumentRoot /var/www/html
+
+# Create a Basic Test Page
+sudo echo "<h1>Apache is Running</h1>" > /var/www/html/index.html
+
+# Start and Enable Apache
+sudo systemctl enable httpd
+sudo systemctl start httpd
+
+# Verify Apache Status
+sudo systemctl status httpd
+
+# Stop Apache Before Using Nginx
+sudo systemctl stop httpd
+
+# Install Nginx
+sudo dnf install nginx -y
+
+# Configure Nginx
+sudo nano /etc/nginx/nginx.conf
+
+# Add/Edit the Following Server Block
+server {
+    listen       80;
+    server_name  your-domain.com;
+
+    location / {
+        root   /usr/share/nginx/html;
+        index  index.html;
+    }
+}
+
+# Create a Basic Test Page for Nginx
+sudo echo "<h1>Nginx is Running</h1>" > /usr/share/nginx/html/index.html
+
+# Start and Enable Nginx
+sudo systemctl enable nginx
+sudo systemctl start nginx
+
+# Verify Nginx Status
+sudo systemctl status nginx
+
+# Switch Between Apache and Nginx
+# Stop the Currently Running Server Before Starting the Other
+sudo systemctl stop httpd
+sudo systemctl start nginx
+
+# Or Stop Nginx Before Starting Apache
+sudo systemctl stop nginx
+sudo systemctl start httpd
+
+# Open Firewall Ports
+sudo firewall-cmd --permanent --add-service=http
+sudo firewall-cmd --reload
