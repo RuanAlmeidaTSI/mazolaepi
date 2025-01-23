@@ -1,0 +1,73 @@
+# Disable the Existing Firewall
+sudo systemctl stop firewalld
+sudo systemctl disable firewalld
+sudo systemctl status firewalld
+
+# Install iptables Tools
+sudo dnf install iptables-services -y
+
+# Create Custom Firewall Script
+sudo nano /usr/local/bin/custom-firewall.sh
+
+# Add the Following Rules to the Script
+#!/bin/bash
+# Flush existing rules
+iptables -F
+
+# Default policies
+iptables -P INPUT DROP
+iptables -P FORWARD DROP
+iptables -P OUTPUT ACCEPT
+
+# Allow loopback traffic
+iptables -A INPUT -i lo -j ACCEPT
+
+# Allow incoming SSH (port 22)
+iptables -A INPUT -p tcp --dport 22 -j ACCEPT
+
+# Allow established and related traffic
+iptables -A INPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+
+# Log dropped packets (optional)
+iptables -A INPUT -j LOG --log-prefix "IPTables-Dropped: " --log-level 4
+
+# Save and Exit the File
+
+# Make the Script Executable
+sudo chmod +x /usr/local/bin/custom-firewall.sh
+
+# Test the Script
+sudo /usr/local/bin/custom-firewall.sh
+
+# Save the Rules
+sudo iptables-save > /etc/sysconfig/iptables
+
+# Create a Systemd Service for the Firewall Script
+sudo nano /etc/systemd/system/custom-firewall.service
+
+# Add the Following Content to the Service File
+[Unit]
+Description=Custom Firewall Rules
+After=network.target
+
+[Service]
+ExecStart=/usr/local/bin/custom-firewall.sh
+Type=oneshot
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
+
+# Save and Exit the File
+
+# Enable the Service
+sudo systemctl enable custom-firewall.service
+
+# Start the Service Immediately
+sudo systemctl start custom-firewall.service
+
+# Verify the Service Status
+sudo systemctl status custom-firewall.service
+
+# Verify the iptables Rules
+sudo iptables -L -v
