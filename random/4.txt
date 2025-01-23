@@ -1,0 +1,80 @@
+1. Install the BIND package.  
+   - Example: `sudo yum install bind bind-utils`  
+     Installs the BIND DNS server and related utilities.  
+
+2. Configure the main BIND configuration file.  
+   - Example: `sudo nano /etc/named.conf`  
+     Edit the main configuration file to define zones, access controls, and other settings.  
+
+   - Key changes:  
+     ```  
+     options {
+         listen-on port 53 { 127.0.0.1; any; }; # Listen on all interfaces.
+         allow-query     { any; };              # Allow DNS queries from any source.
+     };
+
+     zone "example.com" {
+         type master;
+         file "/var/named/example.com.zone";
+     };
+     ```  
+
+3. Create a zone file for your domain.  
+   - Example: `sudo nano /var/named/example.com.zone`  
+     Create the DNS zone file with the necessary records.  
+
+   - Sample zone file:  
+     ```  
+     $TTL 86400
+     @   IN  SOA     ns1.example.com. admin.example.com. (
+                 2025012301 ; Serial
+                 3600       ; Refresh
+                 1800       ; Retry
+                 604800     ; Expire
+                 86400 )    ; Minimum TTL
+
+         IN  NS      ns1.example.com.
+         IN  A       192.168.1.100
+     ns1 IN  A       192.168.1.100
+     www IN  A       192.168.1.101
+     ```  
+
+4. Adjust permissions for the zone file.  
+   - Example: `sudo chown root:named /var/named/example.com.zone`  
+     Ensures that the named service can read the zone file.  
+
+5. Enable and start the `named.service`.  
+   - Example:  
+     ```  
+     sudo systemctl enable named
+     sudo systemctl start named
+     ```  
+     Enables the BIND service at startup and starts it immediately.  
+
+6. Configure the firewall to allow DNS traffic.  
+   - Example:  
+     ```  
+     sudo firewall-cmd --permanent --add-service=dns
+     sudo firewall-cmd --reload
+     ```  
+     Opens port 53 for DNS traffic in the firewall.  
+
+7. Verify that the DNS service is running.  
+   - Example: `sudo systemctl status named`  
+     Checks if the named service is active and running.  
+
+8. Test the DNS resolution.  
+   - Example: `dig @localhost example.com`  
+     Tests if the DNS server resolves the domain "example.com" correctly.  
+
+9. Update the server's resolver configuration (optional).  
+   - Example: `sudo nano /etc/resolv.conf`  
+     Add the server's IP to the resolver configuration:  
+     ```  
+     nameserver 192.168.1.100  
+     ```  
+
+10. Restart the named service after any configuration changes.  
+    - Example: `sudo systemctl restart named`  
+      Applies the updated settings by restarting the service.  
+
