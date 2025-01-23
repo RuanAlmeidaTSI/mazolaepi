@@ -1,1 +1,433 @@
-a
+ssh-keygen 
+	name of file to save key .ssh/ssh_aula2
+
+ssh-copy-id -i ~/.ssh/sshaula2.pub -p 2222 administrador@192.168.3.1
+
+
+
+
+[COMANDO NÃO TESTADO]
+	cat /path/to/your/key.pub | ssh -i /path/to/your/other/key user@host 'cat >> ~/.ssh/authorized_keys'
+
+============================================================================================================================================
+
+
+PermitRootLogin no
+
+AuthorizedKeysFile .ssh/authorized_keys
+
+Match User Administrador
+
+
+============================================================================================================================================
+
+Comando para acessar ssh com chave
+
+ssh -i ~/.ssh/id_aula2 -p 2222 administrador@192.168.3.1
+
+============================================================================================================================================
+
+Para evitar acessos indevidos APAGUE a chave sem senha (apague a privada, pois a partir da chave privada pode-se gerar uma publica)
+
+rm -f id_aula2
+
+============================================================================================================================================
+============================================================================================================================================
+
+PROXY
+
+============================================================================================================================================
+============================================================================================================================================
+
+Serviço similiar a um despachante / relay (Voce requisita um site, o proxy acessa o site em seu proprio nome e o devolve a você usuario final)
+
+Proxy reverso -> Recebe um REQUEST do cliente e redireciona esse request à seção/maquina especifica do backend responsável por lidar com esse tipo de REQUEST. 
+			    É então retornado ao cliente o conteúdo específico baseado no retorno dessa máquina. (EXPLICAÇÃO BÁSICA).
+
+INSTALAR PROXY -> dnf install squid
+
+cd /etc/squid/squid.conf
+
+cp /usr/share/doc/squid/squid.conf.documented /etc/squid/squid.conf -> copia co documento com a configuração MINIMA necessaria ja sobrescrevendo o arquivo existente
+
+PRIMEIRAS CONFIGURACOES
+	CRIANDO UMA ACL
+	- TAG: ACL (+/- linha 1435)
+		- acl [ nome_acl ] [tipo] [valor]
+		  ex.: acl rede_local src 192.168.3.1/28
+			 acl rede_local src 10.3.1.48/28 
+			 acl ifsudeste dstdomain www.ifsudestemg.edu.br
+
+
+	DIZENDO O QUE A ACL FAZ ( CUIDADO! A REGRA QUE VIER PRIMEIRO NÃO SERÁ SOBRESCRITA POR REGRAS SUBSEQUENTES. A QUE VEIO PRIMEIRO É A QUE VALE)
+	
+	http_access [valor] [acl]
+	ex.: http_access allow rede_local
+	ex.: http_access allow if sudeste rede_local
+
+	squid -k reconfigure 
+##############################################################################################################################################################################################
+=============================================================================================================
+Config Arquivo my-zones
+=============================================================================================================
+
+
+zona reversa -> zone "33-47.1.3.10.in-addr.arpa" IN {
+	type master;
+	file "/var/named/masters/33-47.1.3.10.in-addr.arpa.conf";
+	allow-update { none; };
+	allow-transfer { *ip de quem é slave desta zona* };
+}
+
+zona slave -> "batata.inf.br" IN {
+	type slave;
+	file "/var/named/slaves/labredes.inf.br.conf";
+	allow-update { none; };
+	masters { 10.3.1.1; };
+}
+
+
+=============================================================================================================
+Configuração Zona DNS
+=============================================================================================================
+$TTL 1D
+@	in SOA @ herloncamargo.gmail.com (
+									0	; serial
+									1D	;
+									1H	;
+									1W	;
+									3H)	;
+									
+
+
+
+
+=============================================================================================================
+Consultas DIG
+=============================================================================================================
+dig -x 192.168.8.1 -> o -x é a consulta do reverso
+
+
+
+
+=============================================================================================================
+APACHE
+=============================================================================================================
+
+dnf install httpd
+
+
+dig -t ns ifsudestemg.edu.br -> pergunta quais os servidores DNS do domínio
+###########################################################################################################################################################################################
+
+=========================================================================================
+postfix main.cf
+=========================================================================================
+
+IMPLEMENTANDO CRIPTOGRAFIA NO EMAIL
+
+smtpd_tls_key_file = /etc/ssl/privadas/priv-labredes.inf.br.pem
+smtpd_tls_cert_file = /etc/ssl/certificados/cert-labredes.inf.br.pem
+smtpd_tls_security_level = may
+smtp_tls_security_level = may
+smtpd_tls_loglevel = 1
+smtpd_tls_session_cache_timeout = 3600s
+smtpd_tls_session_cache_database = btree:/var/lib/postfix/smtpd_tls_cache
+tls_ransom_source = dev:/dev/urandom
+tls_random_exchange_name = /var/lib/postfix/prng_exch
+smtpd_tls_auth_only = yes
+
+
+
+
+=========================================================================================
+postfix master.cf
+=========================================================================================
+
+descomentar "-o smtpd_tls_wrappermode=yes"
+
+
+=========================================================================================
+dovecot auth.conf
+=========================================================================================
+
+auth_meschanisms = plain login gssapi
+
+=========================================================================================
+dovecot ssl.conf
+=========================================================================================
+
+ssl = yes
+
+
+ssl_cert = </etc/ssl/certificados/cert-labredes.inf.br.pem
+ssl_key = </etc/ssl/privadas/priv-labredes.inf.br.pem
+
+
+=========================================================================================
+TESTANDO CERTIFICADO SSL
+=========================================================================================
+
+openssl s_client -servername mail.labredes.inf.br -connect mail.labredes.inf.br:smtps
+
+
+=========================================================================================
+Instalando webmail
+=========================================================================================
+
+dnf install epel-release
+
+dnf isntall roundcubemail
+
+vim /etc/httpd/conf.d/roundcubemail.conf
+
+www.bancada3.com.br/roundcubemail/installer/
+
+	-Pode trocar o nome em "product_name"
+	-IMAP settings
+		default_host -> mail.bancada3.com.br
+		language -> pt_BR
+
+
+
+
+
+
+
+
+
+
+
+##################################################################################################################################################################################
+
+ssh -p 4002 192.168.3.1
+
+tamanhode4 senha do server
+========================================================================================
+Aula Servidor de E-mail
+========================================================================================
+
+dnf install postfix -> pacote servidor de e-mails
+
+dnf install telnet -> Acesso remoto não criptografado
+
+========================================================================================
+  ---------------------------------
+| UTILIZANDO TELNET    |
+  ---------------------------------
+	telnet [ ip ] [porta]
+
+	---------------------------------
+	email por telnet
+	---------------------------------
+	
+	telnet [ ip ] [ porta ]
+
+	HELO mail.planalto.gov.br -> HELO é quem você é / de qual servidor você é
+	
+	MAIL FROM: <luis.inacio@planalto.gov.br> -> email do remetente
+
+	RCPT TO: <administrador@localhost> -> email do destinatario
+	
+	DATA -> Inicio do corpo do email. Abaixo disso que você escreve tudo e termina com uma linha com ponto.
+	
+	To: Administrador José da Silva <administrador@localhost> 
+	From: Luís Inácio <luis.inacio@planalto.gov.br>
+	Subject: Compareça ao meu gabinete
+
+	Prezado,
+	Favor comparecer ao meu gabinete com a máxima urgência.
+	
+	Atenciosamente,
+	Luís Inácio
+	.
+
+	QUIT -> sair do telnet
+
+========================================================================================================================================================================================
+Na configuração inicial, os emails ficam todos em um arquivo, um arquivo para cada usuario, e estes arquivos estao localizados em cd /var/mail
+========================================================================================================================================================================================
+
+Configuração do postfix -> main.cf
+
+	myhostname = mail.labredes.inf.br
+	mydomain = labredes.inf.br
+
+	myorigin = $mydomain
+
+	mydestination = $mydomain, $myhostname, localhost.$mydomain, localhost -> Quando mandarem algum email para o nosso servidor, ele so vai aceitar para os parâmetros especificados (ex.: so vai aceitar quando o destino for *@meuservidor.com.br)
+
+	mynetworks = 127.0.0.0/8 -> qual rede de servidores de e-mail que vou estar confiando
+
+	relayhost = -> maquinas e endereços que podem usar minha rede para enviar emails -> deixar vazio
+
+	home_mailbox = Maildir/ 
+	
+	smtpd_banner = $myhostname ESMTP $mail_name
+
+	*INSERIR AS LINHAS ABAIXO CASO FOR USAR O DOVECOT (SERVIDOR IMAP) / TERCEIRIZANDO AUTENTICAÇÃO PARA O DOVECOT*
+	*se a configuração começar com smtpd_, seu postfix está funcionando como servidor, se for smtp_, está funcionando como cliente*
+
+	smtpd_sasl_type = dovecot
+	smtpd_sasl_path = private/auth
+	smtpd_sasl_auth_enable = yes
+	smtpd_sasl_security_options = noanonymous
+	smtpd_sasl_local_domain = 
+
+	smtpd_relay_restrictions = permit_sasl_authenticated, reject_unauth_destination
+	smtpd_recipient_restrictions = permit_mynetworks, *faltam configurações*
+
+Configuração do postfix -> master.cf
+
+	descomentar a linha "submission inet n n smtpd"
+
+========================================================================================================================================================================================
+Servidor de E-mail part 2 - Dovecot
+========================================================================================================================================================================================
+
+	dnf install dovecot
+	
+	vim /etc/dovecot/dovecot.conf
+	
+		*faltam configurações*
+
+	vim /etc/dovecot/conf.d/10-auth.conf
+		
+		disable_plaintext_auth = no 
+		auth_mecanisms = plain login
+	
+	vim /etc/dovecot/conf.d/10-mail.conf
+	
+		mail_location = maildir:~/Maildir
+
+	vim /etc/dovecot/conf.d/10-ssl.conf
+		
+		ssl = no
+	
+	vim /etc/dovecot/conf.d/10-.conf
+	
+ 		service-imap-login {
+			port = 143
+		}
+
+		service pop3-login {
+			port = 110
+		}
+
+		service submission-login {
+				inet_listener submission{
+					port = 587
+				}
+			}
+			
+		service auth {
+			...
+		#postfix smtp-auth
+		unix_listener /var/spool/postfix/private/auth {
+			
+			mode = 0666
+			user = postfix
+			group = postfix
+		
+				}		
+			...
+		}
+
+systemctl start dovecot
+systemctl start postfix
+
+========================================================================================================================================================================================
+FIM DA AULA
+========================================================================================================================================================================================
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+###############################################################################################################################
+===================================================================================================================================
+NGINX
+===================================================================================================================================
+
+dnf install nginx
+
+vim /etc/nginx/nginx.conf
+
+	server{
+		listen 80;
+		listen [::]:80;
+		server_name www.labredes.inf.br labredes.inf.br;
+		root /var/www/html/labredes.inf.br;
+	
+		location /ford/arquivos{ -> configuração so vale para este subdiretorio e seus subdiretorios 
+			autoindex on;	
+		}
+
+		location /restrito {
+        	auth_basic "Acesso Restrito!!!";
+        	auth_basic_user_file /var/www/html/herlon.org.br/.htsenhas;
+      		}
+
+      		location ~/\.ht.*{
+		allow 127.0.0.1;
+        	deny all;
+		}
+
+
+		access_log /var/log/nginx/access_labredes.log;
+		error_log /var/log/nginx/error_labredes.log;
+		
+		error_page 404 /404.html;
+		location=/404.html{
+		}
+	
+		error_page 500 502 503 504 /50x.html;
+		location=/50x.html{
+		} 
+
+		return 301 https://$host$request_uri;
+
+	}
+
+===================================================================================================================================
+COLOCANDO NGINX NO GRUPO Servicos
+===================================================================================================================================
+usermod -aG servicos nginx 
+
+-------------------------------------------
+
+##############################################################################################################################################
