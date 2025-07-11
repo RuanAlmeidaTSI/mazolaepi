@@ -1,0 +1,5 @@
+@echo off
+reg add "HKEY_CURRENT_USER\Control Panel\Keyboard" /v InitialKeyboardIndicators /t REG_SZ /d 2 /f
+reg add "HKEY_USERS\.DEFAULT\Control Panel\Keyboard" /v InitialKeyboardIndicators /t REG_SZ /d 2147483650 /f
+
+powershell -NoProfile -NonInteractive -Command "Add-Type -TypeDefinition 'using System; using System.Runtime.InteropServices; public class NumLockUtil { [DllImport(\"user32.dll\")] public static extern void keybd_event(byte bVk, byte bScan, uint dwFlags, System.UIntPtr dwExtraInfo); [DllImport(\"user32.dll\")] public static extern short GetKeyState(int nVirtKey); public const byte VK_NUMLOCK = 0x90; public const int KEYEVENTF_EXTENDEDKEY = 0x1; public const int KEYEVENTF_KEYUP = 0x2; }'; if (([NumLockUtil]::GetKeyState([NumLockUtil]::VK_NUMLOCK) -band 1) -eq 0) { [NumLockUtil]::keybd_event([NumLockUtil]::VK_NUMLOCK, 0x45, [NumLockUtil]::KEYEVENTF_EXTENDEDKEY, [System.UIntPtr]::Zero); [NumLockUtil]::keybd_event([NumLockUtil]::VK_NUMLOCK, 0x45, [NumLockUtil]::KEYEVENTF_EXTENDEDKEY -bor [NumLockUtil]::KEYEVENTF_KEYUP, [System.UIntPtr]::Zero) }"
